@@ -134,7 +134,7 @@
     
     NSLog(@"locationProviderDidUpdateLocation");
     
-    [self.tableView reloadData];
+        //[self.tableView reloadData];
         // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:4 inSection:0]]
         //                withRowAnimation:UITableViewRowAnimationNone];
         
@@ -148,11 +148,28 @@
 - (void)locationProviderDidUpdateHeading {
     NSLog(@"locationProviderDidUpdateHeading");
     
+    dispatch_queue_t headingQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.Heading", NULL);
+    dispatch_async(headingQueue, ^{
+        
+        NSMutableDictionary *dict = [self.data mutableCopy];
+        [dict setObject:[self.locationProvider performSelector:headingSelector] forKey:@"Heading"];
+        self.data = dict;
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:4 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+            
+        });
+        
+    });
+    dispatch_release(headingQueue);
+    
+    
         //dorobit quueeeeeeue
         //nacitaj data.. prerobit data
         //tabulka performSelectorOnMainThread:@selector(reloadRowsAtIndexPaths:) withObjectCiJakoToJE.. WaitUntilDone:Yes
     
-    [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:4 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
+    
 }
 
 - (void)locationProviderDidUpdateLatitude {
