@@ -148,46 +148,43 @@
 - (void)locationProviderDidUpdateHeading {
     NSLog(@"locationProviderDidUpdateHeading");
     
-    dispatch_queue_t headingQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.Heading", NULL);
-    dispatch_async(headingQueue, ^{
-        
-        NSMutableDictionary *dict = [self.data mutableCopy];
-        [dict setObject:[self.locationProvider performSelector:headingSelector] forKey:@"Heading"];
-        self.data = dict;
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            
-            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:4 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
-            
-        });
-        
-    });
-    dispatch_release(headingQueue);
-    
-    
-        //dorobit quueeeeeeue
-        //nacitaj data.. prerobit data
-        //tabulka performSelectorOnMainThread:@selector(reloadRowsAtIndexPaths:) withObjectCiJakoToJE.. WaitUntilDone:Yes
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Heading"]] inSection:0]];
+    cell.textLabel.text = [self.locationProvider performSelector:headingSelector];
     
     
 }
 
 - (void)locationProviderDidUpdateLatitude {
     
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Latitude"]] inSection:0]];
+    cell.textLabel.text = [self.locationProvider latitudeInDMS];
+
+    
 }
 
 
 - (void)locationProviderDidUpdateLongitude {
     
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Longitude"]] inSection:0]];
+    cell.textLabel.text = [self.locationProvider longitudeInDMS];
+
 }
 
 
 - (void)locationProviderDidUpdateAltitude {
     
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Altitude"]] inSection:0]];
+    cell.textLabel.text = [self.locationProvider performSelector:altitudeUnitsSelelector];
+
+    
 }
 
 
 - (void)locationProviderDidUpdateSpeed {
+    
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Speed"]] inSection:0]];
+    cell.textLabel.text = [self.locationProvider performSelector:speedUnitsSelector];
+
     
 }
 

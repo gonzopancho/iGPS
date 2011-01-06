@@ -12,10 +12,6 @@
 
 
 @interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
-
-        //spravit detail view
-        //a info view
-
     
         // !!!!! ZOMBIES SU ZAPNUTE !!!!!
 }
@@ -33,4 +29,5 @@
 
 
 - (IBAction)showSettings:(id)sender;
+
 @end
