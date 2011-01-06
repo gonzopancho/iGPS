@@ -184,7 +184,6 @@
 - (void)loadData {
     
 
-    
         NSString *latitude  = [NSString stringWithString:
                                [self.locationProvider latitudeInDMS]];
         NSString *longitude = [NSString stringWithString:
@@ -242,7 +241,6 @@
     
     self.title = @"iGPS";
     
-    
     [self.navigationController setToolbarHidden:NO animated:YES];
     
     if (!self.locationProvider) {
@@ -251,29 +249,21 @@
     
     [self.locationProvider setDelegate:self];
     [self.locationProvider startUpdatingLocationAndHeading];
-
-    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
-    
-    NSInvocationOperation *setup = [[NSInvocationOperation alloc] initWithTarget:self 
-                                                                        selector:@selector(setupAllSelectors)
-                                                                          object:nil];
-    
-    NSInvocationOperation *loadData = [[NSInvocationOperation alloc] initWithTarget:self
-                                                                           selector:@selector(loadData)
-                                                                             object:nil];
-    
-    [queue addOperations:[NSArray arrayWithObjects:setup,loadData,nil] waitUntilFinished:YES];
-    [setup release];
-    [loadData release];
-    
-    [self.tableView performSelectorOnMainThread:@selector(reloadData)
-                                     withObject:nil
-                                  waitUntilDone:YES];
     
     
-
-        // [self.tableView setScrollEnabled:NO];
-        //[self.tableView reloadData];
+    dispatch_queue_t setupQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.setupQueue", NULL);
+    dispatch_async(setupQueue, ^{
+        
+        [self setupAllSelectors];
+        [self loadData];
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+        
+    });
+    dispatch_release(setupQueue);
+    
 }
 
 /*
