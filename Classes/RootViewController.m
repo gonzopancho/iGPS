@@ -71,9 +71,9 @@
 
 - (void)setupSpeedUnitsSelectorByDefaults {
     
-    NSLog(@"setupSpeedUnitsSelectorByDefaults");
+
     NSNumber *speedUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kSpeedKey];
-    
+        NSLog(@"setupSpeedUnitsSelectorByDefaults %i",[speedUnits intValue]);
     switch ([speedUnits intValue]) {
         case 1:
             self.speedUnitsSelector = @selector(speedInMetresPerSecond);
@@ -95,11 +95,9 @@
 }
 
 - (void)setupAltitudeUnitsSelelectorByDefaults {
-    NSLog(@"setupAltitudeUnitsSelelectorByDefaults");
+    
     NSNumber *altitudeUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kAltitudeKey];
-    
-        // NSLog(@"alt: %i",[altitudeUnits intValue]);
-    
+    NSLog(@"setupAltitudeUnitsSelelectorByDefaults %i",[altitudeUnits intValue]);
     switch ([altitudeUnits intValue]) {
         case 1:
             self.altitudeUnitsSelelector = @selector(altitudeInKilometres);
@@ -117,9 +115,9 @@
 }
 
 - (void)setupHeadingSelectorByDefaults {
-    NSLog(@"setupHeadingSelectorByDefaults");
-    NSNumber *north = [[NSUserDefaults standardUserDefaults] objectForKey:kNorthKey];
     
+    NSNumber *north = [[NSUserDefaults standardUserDefaults] objectForKey:kNorthKey];
+    NSLog(@"setupHeadingSelectorByDefaults %i",[north intValue]);
     switch ([north intValue]) {
         case 1:
             self.headingSelector = @selector(magneticHeading);
@@ -132,17 +130,7 @@
 
 - (void)locationProviderDidUpdateLocation {
     
-    NSLog(@"locationProviderDidUpdateLocation");
-    
-        //[self.tableView reloadData];
-        // [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:4 inSection:0]]
-        //                withRowAnimation:UITableViewRowAnimationNone];
-        
-        //[self.tableView performSelectorOnMainThread:@selector(reloadData)
-        //                           withObject:nil
-        //                        waitUntilDone:NO];
-        // [self.tableView reloadData];
-    
+    NSLog(@"locationProviderDidUpdateLocation");    
 }
 
 - (void)locationProviderDidUpdateHeading {
@@ -193,20 +181,24 @@
     
 }
 
-- (NSDictionary *)loadData {
+- (void)loadData {
     
 
+    
         NSString *latitude  = [NSString stringWithString:
                                [self.locationProvider latitudeInDMS]];
         NSString *longitude = [NSString stringWithString:
                                [self.locationProvider longitudeInDMS]];
+    
         NSString *altitude  = [NSString stringWithString:
                                [self.locationProvider performSelector:self.altitudeUnitsSelelector]];
+    
         NSString *speed     = [NSString stringWithString:
                                [self.locationProvider performSelector:self.speedUnitsSelector]];
+        
         NSString *heading   = [NSString stringWithString:
                                [self.locationProvider performSelector:self.headingSelector]];
-        
+                
         
         NSArray *objects = [NSArray arrayWithObjects:latitude,longitude,heading,altitude,speed,nil];
         
@@ -218,8 +210,6 @@
                          NSLocalizedString(@"Speed",nil),nil];
         
         self.data = [NSDictionary dictionaryWithObjects:objects forKeys:keys]; 
-    
-    return data;
 }
 
 

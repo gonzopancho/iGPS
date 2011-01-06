@@ -15,3 +15,4 @@ extern NSString * const kAccuracyKey;
 extern NSString * const kSpeedKey;
 extern NSString * const kAltitudeKey;
 extern NSString * const kFirstNameKey;
+

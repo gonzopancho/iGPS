@@ -8,7 +8,6 @@
 
 #import "iGPSAppDelegate.h"
 #import "Constants.h"
-#import "SettingsData.h"
 
 
 @implementation iGPSAppDelegate
@@ -33,6 +32,8 @@
         
         NSDictionary *settingsDict  = [NSDictionary dictionaryWithContentsOfFile:finalPath];
         NSArray *prefSpecifierArray = [settingsDict objectForKey:@"PreferenceSpecifiers"];
+        
+        NSLog(@"%@",[prefSpecifierArray description]);
         
         NSNumber *speedDefault    = [NSNumber numberWithInt:0];
         NSNumber *altitudeDefault = [NSNumber numberWithInt:0];
@@ -80,11 +81,6 @@
     [self.window addSubview:navigationController.view];
     [self.window makeKeyAndVisible];
     
-    
-    SettingsData *sd = [[[SettingsData alloc] init] autorelease];
-    NSLog(@"data: %@",[sd.data description]);
-        NSLog(@"sections: %@",[sd.sections description]);
-        NSLog(@"rows: %@",[sd.rows description]);
     
     return YES;
 }

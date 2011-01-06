@@ -20,7 +20,6 @@
 		3B21E11512CBEC56006D4C32 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B21E11412CBEC56006D4C32 /* CoreLocation.framework */; };
 		3B21E19612CC046E006D4C32 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B21E19512CC046E006D4C32 /* Settings.bundle */; };
 		3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */; };
-		3B290F0F12CF3F8A002148B5 /* SettingsData.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B290F0E12CF3F8A002148B5 /* SettingsData.m */; };
 		3B29100112CF5ED9002148B5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B29100012CF5ED9002148B5 /* Constants.m */; };
 		3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7B67F12CD397F00852765 /* SettingsViewController.m */; };
 		3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC7B68012CD397F00852765 /* SettingsViewController.xib */; };
@@ -47,8 +46,6 @@
 		3B21E19512CC046E006D4C32 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		3B290D5412CE4F87002148B5 /* SettingsDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsDetailViewController.h; sourceTree = "<group>"; };
 		3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsDetailViewController.m; sourceTree = "<group>"; };
-		3B290F0D12CF3F8A002148B5 /* SettingsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsData.h; sourceTree = "<group>"; };
-		3B290F0E12CF3F8A002148B5 /* SettingsData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsData.m; sourceTree = "<group>"; };
 		3B290FFF12CF5ED9002148B5 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		3B29100012CF5ED9002148B5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
 		3BC7B67E12CD397F00852765 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
@@ -87,8 +84,6 @@
 				3BC7B67F12CD397F00852765 /* SettingsViewController.m */,
 				3B290D5412CE4F87002148B5 /* SettingsDetailViewController.h */,
 				3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */,
-				3B290F0D12CF3F8A002148B5 /* SettingsData.h */,
-				3B290F0E12CF3F8A002148B5 /* SettingsData.m */,
 				3B290FFF12CF5ED9002148B5 /* Constants.h */,
 				3B29100012CF5ED9002148B5 /* Constants.m */,
 			);
@@ -218,7 +213,6 @@
 				3B21E11112CBEC2E006D4C32 /* GPSDataFormatter.m in Sources */,
 				3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */,
 				3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */,
-				3B290F0F12CF3F8A002148B5 /* SettingsData.m in Sources */,
 				3B29100112CF5ED9002148B5 /* Constants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
