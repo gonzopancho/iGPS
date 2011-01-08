@@ -60,7 +60,8 @@
 - (NSString *)magneticHeading;
 - (NSString *)trueHeading;
 
-- (NSString *)course;
+- (NSString *)courseInDegrees;
+- (NSString *)courseMixed;
 
     //setAccuracy
     //setDistanceFilter

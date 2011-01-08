@@ -17,6 +17,7 @@
 @synthesize speedUnitsSelector;
 @synthesize altitudeUnitsSelelector; 
 @synthesize headingSelector;
+@synthesize courseSelector;
 
 
 #pragma mark -
@@ -59,9 +60,10 @@
 - (void)setupAllSelectors {
     
     NSLog(@"setupAllSelectors");
-        [self setupHeadingSelectorByDefaults];
-        [self setupAltitudeUnitsSelelectorByDefaults];
-        [self setupSpeedUnitsSelectorByDefaults];
+    [self setupHeadingSelectorByDefaults];
+    [self setupAltitudeUnitsSelelectorByDefaults];
+    [self setupSpeedUnitsSelectorByDefaults];
+    [self setupCourseSelectorByDefaults];
    
     
 }
@@ -125,6 +127,22 @@
     }
 }
 
+- (void)setupCourseSelectorByDefaults {
+    
+    NSNumber *course = [[NSUserDefaults standardUserDefaults] objectForKey:kCourseKey];
+    NSLog(@"setupCourseSelectorByDefaults %i",[course intValue]);
+    switch ([course intValue]) {
+        case 1:
+            self.courseSelector = @selector(courseInDegrees);
+            break;
+        default:
+            self.courseSelector = @selector(courseMixed);
+            break;
+    }
+    
+    
+}
+
 - (void)locationProviderDidUpdateLocation {
     
     NSLog(@"locationProviderDidUpdateLocation");    
@@ -180,31 +198,34 @@
 - (void)loadData {
     
 
-        NSString *latitude  = [NSString stringWithString:
-                               [self.locationProvider latitudeInDMS]];
-        NSString *longitude = [NSString stringWithString:
-                               [self.locationProvider longitudeInDMS]];
+    NSString *latitude  = [NSString stringWithString:
+                           [self.locationProvider latitudeInDMS]];
+    NSString *longitude = [NSString stringWithString:
+                           [self.locationProvider longitudeInDMS]];
     
-        NSString *altitude  = [NSString stringWithString:
-                               [self.locationProvider performSelector:self.altitudeUnitsSelelector]];
+    NSString *altitude  = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.altitudeUnitsSelelector]];
     
-        NSString *speed     = [NSString stringWithString:
-                               [self.locationProvider performSelector:self.speedUnitsSelector]];
-        
-        NSString *heading   = [NSString stringWithString:
-                               [self.locationProvider performSelector:self.headingSelector]];
-                
-        
-        NSArray *objects = [NSArray arrayWithObjects:latitude,longitude,heading,altitude,speed,nil];
-        
-        NSArray *keys = [NSArray arrayWithObjects:
-                         NSLocalizedString(@"Latitude",nil),
-                         NSLocalizedString(@"Longitude",nil),
-                         NSLocalizedString(@"Heading",nil),
-                         NSLocalizedString(@"Altitude",nil),
-                         NSLocalizedString(@"Speed",nil),nil];
-        
-        self.data = [NSDictionary dictionaryWithObjects:objects forKeys:keys]; 
+    NSString *speed     = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.speedUnitsSelector]];
+    
+    NSString *heading   = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.headingSelector]];
+    
+    NSString *course    = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.courseSelector]];
+    
+    NSArray *objects    = [NSArray arrayWithObjects:latitude,longitude,heading,altitude,speed,course,nil];
+    
+    NSArray *keys = [NSArray arrayWithObjects:
+                     NSLocalizedString(@"Latitude",nil),
+                     NSLocalizedString(@"Longitude",nil),
+                     NSLocalizedString(@"Heading",nil),
+                     NSLocalizedString(@"Altitude",nil),
+                     NSLocalizedString(@"Speed",nil),
+                     NSLocalizedString(@"Course",nil),nil];
+    
+    self.data = [NSDictionary dictionaryWithObjects:objects forKeys:keys]; 
 }
 
 

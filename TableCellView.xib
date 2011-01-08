@@ -75,7 +75,7 @@
 									<int key="NSColorSpace">1</int>
 									<bytes key="NSRGB">MC45MDE5NjA3OTAyIDAuOTAxOTYwNzkwMiAwLjkwMTk2MDc5MDIAA</bytes>
 								</object>
-								<string key="IBUIShadowOffset">{1, 1}</string>
+								<string key="IBUIShadowOffset">{0, 0}</string>
 								<int key="IBUIBaselineAdjustment">1</int>
 								<float key="IBUIMinimumFontSize">10</float>
 							</object>

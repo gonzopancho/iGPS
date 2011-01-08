@@ -140,6 +140,32 @@
 				<integer>3</integer>
 			</array>
 		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+			<key>Title</key>
+			<string>Course Display Format</string>
+		</dict>
+		<dict>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+			</array>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Current Format</string>
+			<key>Key</key>
+			<string>course</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>Degrees only</string>
+				<string>Degrees with direction</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

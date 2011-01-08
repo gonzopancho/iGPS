@@ -14,4 +14,5 @@ NSString * const kDistanceKey  = @"distance";
 NSString * const kAccuracyKey  = @"accuracy";
 NSString * const kSpeedKey     = @"speed";
 NSString * const kAltitudeKey  = @"alt";
+NSString * const kCourseKey    = @"course";
 NSString * const kFirstNameKey = @"firstNameKey";

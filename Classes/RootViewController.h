@@ -24,11 +24,13 @@
 @property (nonatomic, assign) SEL altitudeUnitsSelelector;
 @property (nonatomic, assign) SEL speedUnitsSelector;
 @property (nonatomic, assign) SEL headingSelector;
+@property (nonatomic, assign) SEL courseSelector;
 
 
 - (void)setupSpeedUnitsSelectorByDefaults;
 - (void)setupAltitudeUnitsSelelectorByDefaults;
 - (void)setupHeadingSelectorByDefaults;
+- (void)setupCourseSelectorByDefaults;
 
 
 - (IBAction)showSettings:(id)sender;

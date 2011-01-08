@@ -175,70 +175,70 @@
 #pragma mark -
 #pragma mark Heading
 
-- (int)headingOrientation:(float)heading {
+- (int)orientationFromDegrees:(float)degrees {
     
-    int h = 0;
+    int orientation = 0;
     
-    if ((heading >= 0.) && (heading <= 44.)) {
-        h = 1; //North
+    if ((degrees >= 0.) && (degrees <= 44.)) {
+        orientation = 1; //North
     }
-    if ((heading >= 45.) && (heading <= 89.9)) {
-        h = 2; //NorthEast
+    if ((degrees >= 45.) && (degrees <= 89.9)) {
+        orientation = 2; //NorthEast
     }
-    if ((heading >= 90.) && (heading <= 134.9)) {
-        h = 3; //East
+    if ((degrees >= 90.) && (degrees <= 134.9)) {
+        orientation = 3; //East
     }
-    if ((heading >= 135.) && (heading <= 179.9)) {
-        h = 4; //SouthEast
+    if ((degrees >= 135.) && (degrees <= 179.9)) {
+        orientation = 4; //SouthEast
     }
-    if ((heading >= 180.) && (heading <= 224.9)) {
-        h = 5; //South
+    if ((degrees >= 180.) && (degrees <= 224.9)) {
+        orientation = 5; //South
     }
-    if ((heading >= 225.) && (heading <= 269.9)) {
-        h = 6; //SouthWest
+    if ((degrees >= 225.) && (degrees <= 269.9)) {
+        orientation = 6; //SouthWest
     }
-    if ((heading >= 270) && (heading <= 314.9)) {
-        h = 7; //West
+    if ((degrees >= 270) && (degrees <= 314.9)) {
+        orientation = 7; //West
     }
-    if ((heading >= 315) && (heading <= 359.9)) {
-        h = 8; //NorthWest
+    if ((degrees >= 315) && (degrees <= 359.9)) {
+        orientation = 8; //NorthWest
     }
     
-    return h;
+    return orientation;
 }
 
-- (NSString *)stringFromHeading:(double)heading {
+- (NSString *)stringFromDegrees:(double)degrees {
 
     NSString *stringToReturn;
-    double headingValue = heading;
+    double degreesValue = degrees;
     
-    switch ([self headingOrientation:headingValue]) {
+    switch ([self orientationFromDegrees:degreesValue]) {
         case 1:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"N",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"N",nil)];
             break;
         case 2:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"NE",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"NE",nil)];
             break;
         case 3:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"E",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"E",nil)];
             break;
         case 4:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"SE",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"SE",nil)];
             break;
         case 5:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"S",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"S",nil)];
             break;
         case 6:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"SW",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"SW",nil)];
             break;
         case 7:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"W",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"W",nil)];
             break;
         case 8:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"NW",nil)];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"NW",nil)];
             break;
         default:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚",headingValue];
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚",degreesValue];
             break;
     }
     return stringToReturn;
@@ -246,23 +246,45 @@
 }
 
 - (NSString *)trueHeading {
-    
-    return [self stringFromHeading:self.locationManager.heading.trueHeading];
+    return [self stringFromDegrees:self.locationManager.heading.trueHeading];
     
 }
 
 - (NSString *)magneticHeading {
-    return [self stringFromHeading:self.locationManager.heading.magneticHeading];  
+    return [self stringFromDegrees:self.locationManager.heading.magneticHeading];  
 }
 
 
 #pragma mark -
 #pragma mark Course
 
-- (NSString *)course {
-    return [NSString stringWithFormat:@"%f",self.locationManager.location.course];
+- (BOOL)isCourseValid:(double)course {
+    
+    if (course == -1) return NO;
+    else return YES;
 }
 
+- (NSString *)courseInDegrees {
+    
+    if ([self isCourseValid:self.locationManager.location.course]) {
+        return [NSString stringWithFormat:@"%.1f˚",self.locationManager.location.course];
+    } else return [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
+    
+}
+
+
+- (NSString *)courseMixed {
+    
+    double courseDegrees = self.locationManager.location.course;
+    NSString *stringToReturn;
+    
+    if ([self isCourseValid:courseDegrees]) {
+        
+        stringToReturn = [self stringFromDegrees:courseDegrees];
+    } else stringToReturn = [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
+    
+    return stringToReturn;
+}
 
 #pragma mark -
 #pragma mark CLLocationManagerDelegate Methods
