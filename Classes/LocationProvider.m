@@ -125,7 +125,7 @@
 }
 
 - (NSString *)altitudeInKilometres {
-    return [NSString stringWithFormat:@"%.3f km",self.locationManager.location.altitude * 1000];
+    return [NSString stringWithFormat:@"%.3f km",self.locationManager.location.altitude * 0.001];
 }
 
 - (NSString *)altitudeInFeet {
@@ -175,12 +175,84 @@
 #pragma mark -
 #pragma mark Heading
 
+- (int)headingOrientation:(float)heading {
+    
+    int h = 0;
+    
+    if ((heading >= 0.) && (heading <= 44.)) {
+        h = 1; //North
+    }
+    if ((heading >= 45.) && (heading <= 89.9)) {
+        h = 2; //NorthEast
+    }
+    if ((heading >= 90.) && (heading <= 134.9)) {
+        h = 3; //East
+    }
+    if ((heading >= 135.) && (heading <= 179.9)) {
+        h = 4; //SouthEast
+    }
+    if ((heading >= 180.) && (heading <= 224.9)) {
+        h = 5; //South
+    }
+    if ((heading >= 225.) && (heading <= 269.9)) {
+        h = 6; //SouthWest
+    }
+    if ((heading >= 270) && (heading <= 314.9)) {
+        h = 7; //West
+    }
+    if ((heading >= 315) && (heading <= 359.9)) {
+        h = 8; //NorthWest
+    }
+    
+    return h;
+}
+
+- (NSString *)stringFromHeading:(double)heading {
+
+    NSString *stringToReturn;
+    double headingValue = heading;
+    
+    switch ([self headingOrientation:headingValue]) {
+        case 1:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"N",nil)];
+            break;
+        case 2:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"NE",nil)];
+            break;
+        case 3:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"E",nil)];
+            break;
+        case 4:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"SE",nil)];
+            break;
+        case 5:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"S",nil)];
+            break;
+        case 6:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"SW",nil)];
+            break;
+        case 7:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"W",nil)];
+            break;
+        case 8:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",headingValue,NSLocalizedString(@"NW",nil)];
+            break;
+        default:
+            stringToReturn = [NSString stringWithFormat:@"%.1f˚",headingValue];
+            break;
+    }
+    return stringToReturn;
+    
+}
+
 - (NSString *)trueHeading {
-    return [NSString stringWithFormat:@"%.f",self.locationManager.heading.trueHeading];
+    
+    return [self stringFromHeading:self.locationManager.heading.trueHeading];
+    
 }
 
 - (NSString *)magneticHeading {
-    return [NSString stringWithFormat:@"%f",self.locationManager.heading.magneticHeading];  
+    return [self stringFromHeading:self.locationManager.heading.magneticHeading];  
 }
 
 

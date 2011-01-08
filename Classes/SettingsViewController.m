@@ -178,18 +178,7 @@
     
     return [[self.sections objectAtIndex:section] objectForKey:@"Title"];
 }
-/*
-- (UITableViewCell *)setupCell:(UITableViewCell *)cell {
-    
-    NSString *textLabel = [NSString string];
-    UIView *cellAccessoryView = [UIView new];
-    dispatch
- 
-                        //nedokoncene, malo byt na dispatch GPSFormatterovych method pre bunku tabulky
-    
-    return cell
-}
-*/
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     

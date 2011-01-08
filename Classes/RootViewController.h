@@ -9,9 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "LocationProvider.h"
 #import "SettingsViewController.h"
+#import "iGPSCustomTableViewCell.h"
 
 
 @interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
+    
+    IBOutlet iGPSCustomTableViewCell *tableCell;
     
         // !!!!! ZOMBIES SU ZAPNUTE !!!!!
 }

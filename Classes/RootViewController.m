@@ -22,14 +22,14 @@
 #pragma mark -
 #pragma mark View lifecycle
 
-/*
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+    
+    self.title = @"iGPS";
+    
 }
-*/
+
 
 - (NSArray *)toolbarItems {
     
@@ -51,9 +51,6 @@
 
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller {
     
-        //[self.tableView performSelectorOnMainThread:@selector(reloadData)
-        //                           withObject:nil
-        //                        waitUntilDone:YES];
     [self.tableView reloadData];
     
     [self dismissModalViewControllerAnimated:YES];
@@ -136,33 +133,32 @@
 - (void)locationProviderDidUpdateHeading {
     NSLog(@"locationProviderDidUpdateHeading");
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Heading"]] inSection:0]];
-    cell.textLabel.text = [self.locationProvider performSelector:headingSelector];
+    iGPSCustomTableViewCell *cell =  (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Heading"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider performSelector:headingSelector]];
+
     
     
 }
 
 - (void)locationProviderDidUpdateLatitude {
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Latitude"]] inSection:0]];
-    cell.textLabel.text = [self.locationProvider latitudeInDMS];
-
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Latitude"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider latitudeInDMS]];
     
 }
 
 
 - (void)locationProviderDidUpdateLongitude {
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Longitude"]] inSection:0]];
-    cell.textLabel.text = [self.locationProvider longitudeInDMS];
-
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Longitude"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider longitudeInDMS]];
 }
 
 
 - (void)locationProviderDidUpdateAltitude {
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Altitude"]] inSection:0]];
-    cell.textLabel.text = [self.locationProvider performSelector:altitudeUnitsSelelector];
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Altitude"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider performSelector:altitudeUnitsSelelector]];
 
     
 }
@@ -170,8 +166,8 @@
 
 - (void)locationProviderDidUpdateSpeed {
     
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Speed"]] inSection:0]];
-    cell.textLabel.text = [self.locationProvider performSelector:speedUnitsSelector];
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Speed"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider performSelector:speedUnitsSelector]];
 
     
 }
@@ -239,41 +235,30 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    self.title = @"iGPS";
-    
     [self.navigationController setToolbarHidden:NO animated:YES];
     
     if (!self.locationProvider) {
         self.locationProvider = [[LocationProvider alloc] initAndStartMonitoringLocation];
+        [self.locationProvider setDelegate:self];
     }
     
-    [self.locationProvider setDelegate:self];
     [self.locationProvider startUpdatingLocationAndHeading];
     
     
-    dispatch_queue_t setupQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.setupQueue", NULL);
-    dispatch_async(setupQueue, ^{
-        
-        [self setupAllSelectors];
-        [self loadData];
-        
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
-        
-    });
-    dispatch_release(setupQueue);
+    [self setupAllSelectors];
+    [self loadData];
+    
+     [self.tableView reloadData];
+}
+
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
 }
 
-/*
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
-*/
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [self.locationProvider stopUpdatingLocationAndHeading];
 	[super viewWillDisappear:animated];
 }
 
@@ -302,19 +287,23 @@
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    static NSString *CellIdentifier = @"Cell";
+        //static NSString *CellIdentifier = @"Cell";
+    static NSString *CustomCell = @"iGPSCustomTableViewCell";
     
-    UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
+        // UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[table dequeueReusableCellWithIdentifier:CustomCell];
     if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+            //        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
+        [[NSBundle mainBundle] loadNibNamed:@"TableCellView" owner:self options:nil];
+        cell = tableCell;
     }
     
     
     NSArray *keys = [self.data allKeys];
     NSString *rowKey = [keys objectAtIndex:indexPath.row];
     
-    cell.textLabel.text = [self.data objectForKey:rowKey];
-    cell.detailTextLabel.text = [keys objectAtIndex:indexPath.row];	
+    [cell setMainTextLabel:[self.data objectForKey:rowKey]];
+    [cell setDetailTextLabel:[keys objectAtIndex:indexPath.row]];	
 
     return cell;
 }

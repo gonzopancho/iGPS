@@ -21,6 +21,8 @@
 		3B21E19612CC046E006D4C32 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B21E19512CC046E006D4C32 /* Settings.bundle */; };
 		3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */; };
 		3B29100112CF5ED9002148B5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B29100012CF5ED9002148B5 /* Constants.m */; };
+		3B8C528812D8472400793C6F /* iGPSCustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */; };
+		3B8C52A412D850F800793C6F /* TableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B8C52A312D850F800793C6F /* TableCellView.xib */; };
 		3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7B67F12CD397F00852765 /* SettingsViewController.m */; };
 		3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC7B68012CD397F00852765 /* SettingsViewController.xib */; };
 /* End PBXBuildFile section */
@@ -48,6 +50,9 @@
 		3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsDetailViewController.m; sourceTree = "<group>"; };
 		3B290FFF12CF5ED9002148B5 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		3B29100012CF5ED9002148B5 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		3B8C528612D8472400793C6F /* iGPSCustomTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iGPSCustomTableViewCell.h; sourceTree = "<group>"; };
+		3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iGPSCustomTableViewCell.m; sourceTree = "<group>"; };
+		3B8C52A312D850F800793C6F /* TableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableCellView.xib; sourceTree = "<group>"; };
 		3BC7B67E12CD397F00852765 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		3BC7B67F12CD397F00852765 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		3BC7B68012CD397F00852765 /* SettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = Classes/SettingsViewController.xib; sourceTree = "<group>"; };
@@ -86,6 +91,8 @@
 				3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */,
 				3B290FFF12CF5ED9002148B5 /* Constants.h */,
 				3B29100012CF5ED9002148B5 /* Constants.m */,
+				3B8C528612D8472400793C6F /* iGPSCustomTableViewCell.h */,
+				3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -127,6 +134,7 @@
 				28F335F01007B36200424DE2 /* RootViewController.xib */,
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
 				8D1107310486CEB800E47090 /* iGPS-Info.plist */,
+				3B8C52A312D850F800793C6F /* TableCellView.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -196,6 +204,7 @@
 				28F335F11007B36200424DE2 /* RootViewController.xib in Resources */,
 				3B21E19612CC046E006D4C32 /* Settings.bundle in Resources */,
 				3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */,
+				3B8C52A412D850F800793C6F /* TableCellView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +223,7 @@
 				3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */,
 				3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */,
 				3B29100112CF5ED9002148B5 /* Constants.m in Sources */,
+				3B8C528812D8472400793C6F /* iGPSCustomTableViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
