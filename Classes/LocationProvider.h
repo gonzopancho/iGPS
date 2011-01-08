@@ -32,6 +32,7 @@
 @property (nonatomic, assign) BOOL isSpeedValid;
 
 
+
 - (id)initAndStartMonitoringLocation;
 
 - (void)startUpdatingLocationAndHeading;
@@ -65,6 +66,7 @@
 
     //setAccuracy
     //setDistanceFilter
+    //poriesit zobrazenie priznaku aktualizovania
 
 @end
 

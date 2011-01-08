@@ -193,6 +193,9 @@
 
 - (void)locationProviderDidUpdateCourse {
     
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Course"]] inSection:0]];
+    [cell setMainTextLabel:[self.locationProvider performSelector:courseSelector]];
+    
 }
 
 - (void)loadData {
@@ -269,7 +272,7 @@
     [self setupAllSelectors];
     [self loadData];
     
-     [self.tableView reloadData];
+    [self.tableView reloadData];
 }
 
 
@@ -322,6 +325,7 @@
     
     NSArray *keys = [self.data allKeys];
     NSString *rowKey = [keys objectAtIndex:indexPath.row];
+        //poriesit poradie!!!!!
     
     [cell setMainTextLabel:[self.data objectForKey:rowKey]];
     [cell setDetailTextLabel:[keys objectAtIndex:indexPath.row]];	

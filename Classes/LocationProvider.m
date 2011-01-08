@@ -17,6 +17,7 @@
 @synthesize isSpeedValid;
 
 
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -338,7 +339,7 @@
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
-    
+  
     if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateHeading)]) {
         [[self delegate] locationProviderDidUpdateHeading];
     }
