@@ -11,4 +11,8 @@
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
     #import <UIKit/UIKit.h>
+    #import "LocalizationHandler.h"
 #endif
+
+#undef NSLocalizedString
+#define NSLocalizedString(key,comment) [[LocalizationHandler sharedHandler] localizedString:key]

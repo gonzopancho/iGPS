@@ -8,6 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+    //#undef NSLocalizedString
+    //#define NSLocalizedString(key, comment) MyLocalizedStringFunction(key)
+
+/*void MyLocalizedStringFunction(NSString *key){
+    
+    NSArray *languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];
+    NSString *language = [languages objectAtIndex:0];
+    NSBundle *bundle = [NSBundle bundleWithIdentifier:[NSString stringWithFormat:@"%@.lproj",language]];
+    [bundle localizedStringForKey:key value:nil table:nil];
+    
+}
+*/
 int main(int argc, char *argv[]) {
     
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];

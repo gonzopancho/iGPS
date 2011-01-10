@@ -8,6 +8,7 @@
 
 #import "RootViewController.h"
 #import "Constants.h"
+#import <unistd.h>
 
 @implementation RootViewController
 
@@ -38,16 +39,47 @@
                                                                        style:UIBarButtonItemStyleBordered
                                                                       target:self
                                                                       action:@selector(showSettings:)];
+    UIBarButtonItem *languageButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
+                                                                       style:UIBarButtonItemStyleBordered
+                                                                      target:self
+                                                                      action:@selector(changeLanguage:)];
     
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace 
                                                                                    target:nil action:nil];
     
-    NSArray *buttons = [NSArray arrayWithObjects:flexibleSpace,settingsButton,nil];
-    
+    NSArray *buttons = [NSArray arrayWithObjects:languageButton,flexibleSpace,settingsButton,nil];
+
+    [languageButton release];
     [settingsButton release];
     [flexibleSpace release];
     
     return buttons;
+}
+
+
+
+- (IBAction)changeLanguage:(id)sender {
+    
+    NSMutableArray *languages = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"]];
+    
+    NSString *lang = [languages objectAtIndex:0];
+    
+    
+    if ([lang isEqualToString:@"en"]) {
+        lang = @"sk";
+    } else lang = @"en";
+    
+    [languages replaceObjectAtIndex:0 withObject:lang];
+    [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];     
+        //[self.tableView reloadData];
+    
+        
+    
+    [self.navigationController setToolbarHidden:YES animated:YES];
+    [self.navigationController setToolbarHidden:NO animated:YES];
+    [self locationProviderDidUpdateSpeed];
+    
+    
 }
 
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller {
