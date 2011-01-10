@@ -71,13 +71,10 @@
     
     [languages replaceObjectAtIndex:0 withObject:lang];
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];     
-        //[self.tableView reloadData];
     
-        
-    
+    [self viewWillAppear:YES];
     [self.navigationController setToolbarHidden:YES animated:YES];
     [self.navigationController setToolbarHidden:NO animated:YES];
-    [self locationProviderDidUpdateSpeed];
     
     
 }
