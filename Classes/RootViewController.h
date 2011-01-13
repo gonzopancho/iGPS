@@ -37,5 +37,6 @@
 
 
 - (IBAction)showSettings:(id)sender;
+- (IBAction)openInMaps:(id)sender;
 
 @end

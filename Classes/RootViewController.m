@@ -40,6 +40,10 @@
                                                                        style:UIBarButtonItemStyleBordered
                                                                       target:self
                                                                       action:@selector(showSettings:)];
+    UIBarButtonItem *mapsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Open in Maps",nil)
+                                                                       style:UIBarButtonItemStyleBordered
+                                                                      target:self
+                                                                      action:@selector(openInMaps:)];
     UIBarButtonItem *languageButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
                                                                        style:UIBarButtonItemStyleBordered
                                                                       target:self
@@ -48,8 +52,8 @@
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace 
                                                                                    target:nil action:nil];
     
-    NSArray *buttons = [NSArray arrayWithObjects:languageButton,flexibleSpace,settingsButton,nil];
-
+    NSArray *buttons = [NSArray arrayWithObjects:mapsButton,flexibleSpace,languageButton,flexibleSpace,settingsButton,nil];
+    [mapsButton release];
     [languageButton release];
     [settingsButton release];
     [flexibleSpace release];
@@ -58,7 +62,11 @@
 }
 
 
-
+- (IBAction)openInMaps:(id)sender {
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://maps.google.com/maps?q=cupertino"]];
+    
+}
 
 
 - (IBAction)changeLanguage:(id)sender {
