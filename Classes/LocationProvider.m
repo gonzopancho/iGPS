@@ -74,7 +74,7 @@
         }
         [self.locationManager startUpdatingHeading];
     }
-        ///gitTEST
+
 }
 - (void)stopUpdatingHeading {
     
