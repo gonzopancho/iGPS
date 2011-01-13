@@ -21,12 +21,15 @@
 
 @property (nonatomic, retain) LocationProvider *locationProvider;
 @property (nonatomic, retain) NSDictionary *data;
+@property (nonatomic, retain) NSMutableArray *values;
+@property (nonatomic, retain) NSArray *names;
 @property (nonatomic, assign) SEL altitudeUnitsSelelector;
 @property (nonatomic, assign) SEL speedUnitsSelector;
 @property (nonatomic, assign) SEL headingSelector;
 @property (nonatomic, assign) SEL courseSelector;
 
 
+- (void)setStringValue:(NSString *)value atIndex:(NSUInteger)index;
 - (void)setupSpeedUnitsSelectorByDefaults;
 - (void)setupAltitudeUnitsSelelectorByDefaults;
 - (void)setupHeadingSelectorByDefaults;

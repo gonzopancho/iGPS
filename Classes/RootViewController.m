@@ -8,13 +8,14 @@
 
 #import "RootViewController.h"
 #import "Constants.h"
-#import <unistd.h>
 
 @implementation RootViewController
 
 
 @synthesize locationProvider;
 @synthesize data;
+@synthesize names;
+@synthesize values;
 @synthesize speedUnitsSelector;
 @synthesize altitudeUnitsSelelector; 
 @synthesize headingSelector;
@@ -58,6 +59,8 @@
 
 
 
+
+
 - (IBAction)changeLanguage:(id)sender {
     
     NSMutableArray *languages = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"]];
@@ -72,7 +75,7 @@
     [languages replaceObjectAtIndex:0 withObject:lang];
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];     
     
-    [self viewWillAppear:YES];
+    [self viewWillAppear:NO];
     [self.navigationController setToolbarHidden:YES animated:YES];
     [self.navigationController setToolbarHidden:NO animated:YES];
     
@@ -177,59 +180,78 @@
     NSLog(@"locationProviderDidUpdateLocation");    
 }
 
+- (void)updateCellForIndexPath:(NSIndexPath *)indexPath withSelector:(SEL)aSelector {
+    
+    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+    NSString *label = [self.locationProvider performSelector:aSelector];
+    [cell setMainTextLabel:label];
+    [self setStringValue:label atIndex:indexPath.row];
+}
+
 - (void)locationProviderDidUpdateHeading {
     NSLog(@"locationProviderDidUpdateHeading");
     
-    iGPSCustomTableViewCell *cell =  (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Heading"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider performSelector:headingSelector]];
-
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Heading",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.headingSelector];
     
     
 }
 
 - (void)locationProviderDidUpdateLatitude {
     
-    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Latitude"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider latitudeInDMS]];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:@selector(latitudeInDMS)];
     
 }
 
 
 - (void)locationProviderDidUpdateLongitude {
     
-    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Longitude"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider longitudeInDMS]];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:@selector(longitudeInDMS)];
+    
 }
 
 
 - (void)locationProviderDidUpdateAltitude {
     
-    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Altitude"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider performSelector:altitudeUnitsSelelector]];
-
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.altitudeUnitsSelelector];
+    
     
 }
 
 
 - (void)locationProviderDidUpdateSpeed {
     
-    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Speed"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider performSelector:speedUnitsSelector]];
-
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.speedUnitsSelector];
     
 }
 
 
 - (void)locationProviderDidUpdateCourse {
     
-    iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:[NSString stringWithString:@"Course"]] inSection:0]];
-    [cell setMainTextLabel:[self.locationProvider performSelector:courseSelector]];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.courseSelector];
+    
     
 }
 
-- (void)loadData {
+- (void)setStringValue:(NSString *)value atIndex:(NSUInteger)index {
     
+    [self.values replaceObjectAtIndex:index withObject:value];
+    
+}
 
+- (void)setupValues {
+    
     NSString *latitude  = [NSString stringWithString:
                            [self.locationProvider latitudeInDMS]];
     NSString *longitude = [NSString stringWithString:
@@ -247,17 +269,27 @@
     NSString *course    = [NSString stringWithString:
                            [self.locationProvider performSelector:self.courseSelector]];
     
-    NSArray *objects    = [NSArray arrayWithObjects:latitude,longitude,heading,altitude,speed,course,nil];
+    self.values = [NSMutableArray arrayWithObjects:latitude,longitude,heading,altitude,speed,course,nil];
     
-    NSArray *keys = [NSArray arrayWithObjects:
-                     NSLocalizedString(@"Latitude",nil),
-                     NSLocalizedString(@"Longitude",nil),
-                     NSLocalizedString(@"Heading",nil),
-                     NSLocalizedString(@"Altitude",nil),
-                     NSLocalizedString(@"Speed",nil),
-                     NSLocalizedString(@"Course",nil),nil];
+}
+
+- (void)setupNames {
     
-    self.data = [NSDictionary dictionaryWithObjects:objects forKeys:keys]; 
+    self.names = [NSArray arrayWithObjects:
+                  NSLocalizedString(@"Latitude",nil),
+                  NSLocalizedString(@"Longitude",nil),
+                  NSLocalizedString(@"Heading",nil),
+                  NSLocalizedString(@"Altitude",nil),
+                  NSLocalizedString(@"Speed",nil),
+                  NSLocalizedString(@"Course",nil),nil];
+    
+}
+
+- (void)loadData {
+
+    [self setupNames];
+    [self setupValues];
+
 }
 
 
@@ -333,7 +365,7 @@
 
 // Customize the number of rows in the table view.
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
-    return [self.data count];
+    return [self.names count];
 }
 
 
@@ -352,12 +384,9 @@
     }
     
     
-    NSArray *keys = [self.data allKeys];
-    NSString *rowKey = [keys objectAtIndex:indexPath.row];
-        //poriesit poradie!!!!!
     
-    [cell setMainTextLabel:[self.data objectForKey:rowKey]];
-    [cell setDetailTextLabel:[keys objectAtIndex:indexPath.row]];	
+    [cell setMainTextLabel:[self.values objectAtIndex:indexPath.row]];
+    [cell setDetailTextLabel:[self.names objectAtIndex:indexPath.row]];	
 
     return cell;
 }
@@ -384,6 +413,8 @@
 
 
 - (void)dealloc {
+    [names release];
+    [values release];
     [data release];
     [locationProvider release];
     [super dealloc];

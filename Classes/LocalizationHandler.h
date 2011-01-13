@@ -10,10 +10,15 @@
 
 
 @interface LocalizationHandler : NSObject {
+    
 
 }
 
+@property (nonatomic, retain) NSBundle *bundle;
+
 + (LocalizationHandler *)sharedHandler;
+- (void)setupKeyValueObserverving;
+- (void)setupBundle;
 - (NSString *)localizedString:(NSString *)key;
 
 

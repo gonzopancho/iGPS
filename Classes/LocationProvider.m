@@ -13,8 +13,10 @@
 @implementation LocationProvider
 
 @synthesize locationManager;
+@synthesize currentHeading;
 @synthesize delegate;
 @synthesize isSpeedValid;
+@synthesize isHeadingValid;
 
 
 
@@ -180,7 +182,7 @@
     
     int orientation = 0;
     
-    if ((degrees >= 0.) && (degrees <= 44.)) {
+    if ((degrees >= 0.) && (degrees <= 44.9)) {
         orientation = 1; //North
     }
     if ((degrees >= 45.) && (degrees <= 89.9)) {
@@ -340,10 +342,20 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
   
-    if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateHeading)]) {
-        [[self delegate] locationProviderDidUpdateHeading];
+    [newHeading retain];
+    if ((self.currentHeading.magneticHeading != newHeading.magneticHeading)  
+        ) {
+        
+        self.currentHeading = newHeading;
+        isHeadingValid = YES;
+        
+        if ([self.delegate respondsToSelector:@selector(locationProviderDidUpdateHeading)]) {
+            [self.delegate performSelector:@selector(locationProviderDidUpdateHeading)];
+        }
+        
     }
 }
+    
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     

@@ -27,9 +27,11 @@
 }
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, retain) CLHeading *currentHeading;
 @property (nonatomic, retain) id <LocationProviderDelegate> delegate;
 
 @property (nonatomic, assign) BOOL isSpeedValid;
+@property (nonatomic, assign) BOOL isHeadingValid;
 
 
 
