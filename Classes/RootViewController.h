@@ -29,6 +29,7 @@
 @property (nonatomic, assign) SEL courseSelector;
 
 
+
 - (void)setStringValue:(NSString *)value atIndex:(NSUInteger)index;
 - (void)setupSpeedUnitsSelectorByDefaults;
 - (void)setupAltitudeUnitsSelelectorByDefaults;
