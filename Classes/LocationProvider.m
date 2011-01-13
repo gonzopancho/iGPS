@@ -18,8 +18,6 @@
 @synthesize isSpeedValid;
 @synthesize isHeadingValid;
 
-
-
 #pragma mark -
 #pragma mark Initialization
 
