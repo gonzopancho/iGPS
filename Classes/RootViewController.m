@@ -62,7 +62,8 @@ static int kCapacity = 6;
 
 - (IBAction)changeLanguage:(id)sender {
     
-    NSMutableArray *languages = [NSMutableArray arrayWithArray:[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"]];
+    NSMutableArray *languages = [NSMutableArray arrayWithArray:
+                                 [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"]];
     
     NSString *lang = [languages objectAtIndex:0];
     
@@ -290,7 +291,9 @@ static int kCapacity = 6;
 }
 
 - (void)loadData {
-
+    
+    NSLog(@"%@",[self.locationProvider verticalAccuracy]);
+    NSLog(@"%@",[self.locationProvider horizontalAccuracy]);
     [self setupValues];
     [self setupNames];
 
@@ -331,8 +334,7 @@ static int kCapacity = 6;
         [self.locationProvider setDelegate:self];
     }
     
-    [self.locationProvider startUpdatingLocationAndHeading];
-    
+    [self.locationProvider startUpdatingLocationAndHeading];    
     
     [self setupAllSelectors];
     [self loadData];

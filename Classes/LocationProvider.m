@@ -8,6 +8,7 @@
 
 #import "LocationProvider.h"
 #import "GPSDataFormatter.h"
+#import "Constants.h"
 
 
 @implementation LocationProvider
@@ -26,6 +27,7 @@
     if ((self = [super init])) {
        
         [self startUpdatingLocationAndHeading];
+        [self performSelector:@selector(setupKeyValueObserverving)];
     }
     return self;
 }
@@ -53,6 +55,26 @@
 
 #pragma mark -
 #pragma mark LocationProvider life cycle
+
+- (void)setupKeyValueObserverving {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accuracyChanged:)
+                                                 name:kAccuracyKey
+                                               object:nil];
+    
+}
+
+- (void)defaultsChanged:(NSNotification *)aNotification {
+    NSLog(@"data has been changed, LocationProvider");
+}
+
+- (void)accuracyChanged:(NSNotification *)aNotification {
+    
+         NSLog(@"!!!!!!!!!!!!!accuracyChanged!!!!!!!!!!!!!");
+   
+}
+
 
 - (void)setAccuracy:(int)newAccuracy {
     
@@ -137,8 +159,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Latitude and Longitude
+    //Latitude and Longitude
 
 - (NSString *)latitudeInDegDec {
     return [NSString stringWithFormat:@"%f",self.locationManager.location.coordinate.latitude];
@@ -157,8 +178,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Altitude
+    //Altitude
 
 - (NSString *)altitudeInMetres {
     return [NSString stringWithFormat:@"%.3f m",self.locationManager.location.altitude];
@@ -177,8 +197,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Speed
+    //Speed
 
 
 - (NSString *)speedInMetresPerSecond {
@@ -212,8 +231,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Heading
+    //Heading
 
 - (int)orientationFromDegrees:(float)degrees {
     
@@ -295,8 +313,7 @@
 }
 
 
-#pragma mark -
-#pragma mark Course
+    //Course
 
 - (BOOL)isCourseValid:(double)course {
     
@@ -324,6 +341,18 @@
     } else stringToReturn = [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
     
     return stringToReturn;
+}
+
+    //Accuracy
+
+- (NSString *)verticalAccuracy {
+    
+    return [NSString stringWithFormat:@"%.2f",self.locationManager.location.verticalAccuracy];
+}
+
+- (NSString *)horizontalAccuracy {
+    
+    return [NSString stringWithFormat:@"%.2f",self.locationManager.location.horizontalAccuracy];
 }
 
 #pragma mark -
@@ -380,8 +409,7 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
   
     [newHeading retain];
-    if ((self.currentHeading.magneticHeading != newHeading.magneticHeading)  
-        ) {
+    if (self.currentHeading.trueHeading != newHeading.trueHeading) {
         
         self.currentHeading = newHeading;
         isHeadingValid = YES;
@@ -410,8 +438,8 @@
 #pragma mark -
 #pragma mark MemoryManagement
 
-
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"accuracy" object:nil];
     [locationManager release];
     [delegate release];
     [super dealloc];

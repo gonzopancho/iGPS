@@ -37,8 +37,11 @@
 
 - (int)selectedRow {
     
-    NSNumber *temp = [[NSUserDefaults standardUserDefaults] objectForKey:self.keyForData];
-    self.selectedRow = [temp intValue];
+    if (!selectedRow) {
+        NSNumber *temp = [[NSUserDefaults standardUserDefaults] objectForKey:self.keyForData];
+        self.selectedRow = [temp intValue];
+    }
+    
     return selectedRow;
 }
 
@@ -54,6 +57,12 @@
     [self.tableView reloadData];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:self.selectedRow] forKey:self.keyForData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:self.keyForData object:nil];
+
+}
 
 #pragma mark -
 #pragma mark Table view data source
@@ -100,13 +109,19 @@
 #pragma mark Table view delegate
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-         
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:indexPath.row] forKey:self.keyForData];
     
-    [self.tableView reloadData];
-    
-        //spinavy a hnusny trik za ktory zhorim v pekle... :)
-    [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+    if (indexPath.row != self.selectedRow) {
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]];
+        [cell setAccessoryType:UITableViewCellAccessoryNone];
+        UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        [newCell setAccessoryType:UITableViewCellAccessoryCheckmark];
+        
+            //spinavy a hnusny trik za ktory zhorim v pekle... :)
+        [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
+        
+        
+        self.selectedRow = indexPath.row;
+    }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
 }

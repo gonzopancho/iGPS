@@ -61,21 +61,15 @@ static NSBundle *bundle = nil;
          
 
 - (void)setupBundle {
+            
+    NSArray *languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];    
+    NSString *language = [languages objectAtIndex:0];
     
-    dispatch_queue_t bundleQueue = dispatch_queue_create("dispatchQueue", NULL);
-    dispatch_async(bundleQueue, ^{
-        
-        NSArray *languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];    
-        NSString *language = [languages objectAtIndex:0];
-        
-        if ([language isEqualToString:@"en"]) language = @"English";
-        
-        NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
-            //NSLog(@"bundlePath: %@",bundlePath);
-        [self setBundle:[NSBundle bundleWithPath:bundlePath]];
-        
-    });
-    dispatch_release(bundleQueue);
+    if ([language isEqualToString:@"en"]) language = @"English";
+    
+    NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
+        //NSLog(@"bundlePath: %@",bundlePath);
+    [self setBundle:[NSBundle bundleWithPath:bundlePath]];
 }
 
 

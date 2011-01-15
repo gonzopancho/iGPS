@@ -69,6 +69,9 @@
 - (NSString *)courseInDegrees;
 - (NSString *)courseMixed;
 
+- (NSString *)verticalAccuracy;
+- (NSString *)horizontalAccuracy;
+
     //setAccuracy
     //setDistanceFilter
     //poriesit zobrazenie priznaku aktualizovania
