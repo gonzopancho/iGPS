@@ -21,6 +21,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions { 
     
+    
     NSString *testValue = [[NSUserDefaults standardUserDefaults] stringForKey:kFirstNameKey];
     if (testValue == nil)
     {

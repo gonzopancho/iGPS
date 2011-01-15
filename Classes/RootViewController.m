@@ -21,6 +21,8 @@
 @synthesize headingSelector;
 @synthesize courseSelector;
 
+static int kCapacity = 6;
+
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -33,17 +35,12 @@
     
 }
 
-
 - (NSArray *)toolbarItems {
     
     UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Settings",nil)
                                                                        style:UIBarButtonItemStyleBordered
                                                                       target:self
                                                                       action:@selector(showSettings:)];
-    UIBarButtonItem *mapsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Open in Maps",nil)
-                                                                       style:UIBarButtonItemStyleBordered
-                                                                      target:self
-                                                                      action:@selector(openInMaps:)];
     UIBarButtonItem *languageButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
                                                                        style:UIBarButtonItemStyleBordered
                                                                       target:self
@@ -52,8 +49,8 @@
     UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace 
                                                                                    target:nil action:nil];
     
-    NSArray *buttons = [NSArray arrayWithObjects:mapsButton,flexibleSpace,languageButton,flexibleSpace,settingsButton,nil];
-    [mapsButton release];
+    NSArray *buttons = [NSArray arrayWithObjects:languageButton,flexibleSpace,settingsButton,nil];
+    
     [languageButton release];
     [settingsButton release];
     [flexibleSpace release];
@@ -61,12 +58,6 @@
     return buttons;
 }
 
-
-- (IBAction)openInMaps:(id)sender {
-    
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://maps.google.com/maps?q=cupertino"]];
-    
-}
 
 
 - (IBAction)changeLanguage:(id)sender {
@@ -193,11 +184,12 @@
     iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     NSString *label = [self.locationProvider performSelector:aSelector];
     [cell setMainTextLabel:label];
-    [self setStringValue:label atIndex:indexPath.row];
+    NSLog(@"label: %@, index: %d",label,indexPath.row);
+    [self setStringValue:label atIndex:indexPath];
 }
 
 - (void)locationProviderDidUpdateHeading {
-    NSLog(@"locationProviderDidUpdateHeading");
+        //NSLog(@"locationProviderDidUpdateHeading");
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Heading",nil)] inSection:0];
     
@@ -208,7 +200,7 @@
 
 - (void)locationProviderDidUpdateLatitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
     
     [self updateCellForIndexPath:indexPath withSelector:@selector(latitudeInDMS)];
     
@@ -217,7 +209,7 @@
 
 - (void)locationProviderDidUpdateLongitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];    
     
     [self updateCellForIndexPath:indexPath withSelector:@selector(longitudeInDMS)];
     
@@ -226,7 +218,7 @@
 
 - (void)locationProviderDidUpdateAltitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
     
     [self updateCellForIndexPath:indexPath withSelector:self.altitudeUnitsSelelector];
     
@@ -236,7 +228,7 @@
 
 - (void)locationProviderDidUpdateSpeed {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)] inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)] inSection:0];
     
     [self updateCellForIndexPath:indexPath withSelector:self.speedUnitsSelector];
     
@@ -245,16 +237,20 @@
 
 - (void)locationProviderDidUpdateCourse {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[[self.data allKeys] indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)] inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)] inSection:0];
     
     [self updateCellForIndexPath:indexPath withSelector:self.courseSelector];
     
     
 }
 
-- (void)setStringValue:(NSString *)value atIndex:(NSUInteger)index {
+- (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
     
-    [self.values replaceObjectAtIndex:index withObject:value];
+    NSLog(@"Index Value: %i",index.row);
+    if ([self.values count] > index.row) {
+        [self.values replaceObjectAtIndex:index.row withObject:value];
+    }
+    
     
 }
 
@@ -295,8 +291,8 @@
 
 - (void)loadData {
 
-    [self setupNames];
     [self setupValues];
+    [self setupNames];
 
 }
 

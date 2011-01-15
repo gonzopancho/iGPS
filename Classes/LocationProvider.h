@@ -44,6 +44,9 @@
 - (void)startUpdatingLocation;
 - (void)stopUpdatingLocation;
 
+- (void)setAccuracy:(int)newAccuracy;
+- (void)setDistanceFilter:(int)newFilter;
+
 - (NSString *)latitudeInDegDec;
 - (NSString *)latitudeInDMS;
 - (NSString *)longitudeInDegDec;

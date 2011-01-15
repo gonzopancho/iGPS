@@ -14,7 +14,6 @@
 
 }
 
-@property (nonatomic, retain) NSBundle *bundle;
 
 + (LocalizationHandler *)sharedHandler;
 - (void)setupKeyValueObserverving;

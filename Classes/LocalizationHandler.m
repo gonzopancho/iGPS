@@ -12,9 +12,8 @@
 
 @implementation LocalizationHandler
 
-@synthesize bundle;
-
 static LocalizationHandler *sharedLocalizator = nil;
+static NSBundle *bundle = nil;
 
 - (id)init {
     
@@ -51,6 +50,14 @@ static LocalizationHandler *sharedLocalizator = nil;
                 options:NSKeyValueObservingOptionNew
                 context:nil];
 }
+
+- (void)setBundle:(NSBundle *)newBundle {
+    
+    [newBundle retain];
+    [bundle release];
+    bundle = newBundle;
+    
+}
          
 
 - (void)setupBundle {
@@ -65,7 +72,7 @@ static LocalizationHandler *sharedLocalizator = nil;
         
         NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
             //NSLog(@"bundlePath: %@",bundlePath);
-        self.bundle = [NSBundle bundleWithPath:bundlePath];
+        [self setBundle:[NSBundle bundleWithPath:bundlePath]];
         
     });
     dispatch_release(bundleQueue);

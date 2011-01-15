@@ -38,7 +38,7 @@
     
     
     self.locationManager.delegate = self;
-    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    [self setAccuracy:1];
     self.locationManager.distanceFilter = 10;
 }
 
@@ -53,6 +53,45 @@
 
 #pragma mark -
 #pragma mark LocationProvider life cycle
+
+- (void)setAccuracy:(int)newAccuracy {
+    
+
+    if (newAccuracy != self.locationManager.desiredAccuracy) {
+        
+        switch (newAccuracy) {
+            case 1:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+                break;
+            case 2:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+                break;
+            case 3:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+                break;
+            case 4:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyKilometer;
+                break;
+            case 5:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+                break;
+            default:
+                self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+                break;
+        }
+        
+    }
+        
+}
+
+
+- (void)setDistanceFilter:(int)newFilter {
+    
+    if (newFilter != self.locationManager.distanceFilter) {
+        self.locationManager.distanceFilter = newFilter;
+    }
+    
+}
 
 - (void)startUpdatingLocationAndHeading {
     

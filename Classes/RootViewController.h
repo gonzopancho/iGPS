@@ -30,7 +30,7 @@
 
 
 
-- (void)setStringValue:(NSString *)value atIndex:(NSUInteger)index;
+- (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
 - (void)setupSpeedUnitsSelectorByDefaults;
 - (void)setupAltitudeUnitsSelelectorByDefaults;
 - (void)setupHeadingSelectorByDefaults;
@@ -38,6 +38,5 @@
 
 
 - (IBAction)showSettings:(id)sender;
-- (IBAction)openInMaps:(id)sender;
 
 @end
