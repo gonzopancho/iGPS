@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1056</int>
-		<string key="IBDocument.SystemVersion">10H574</string>
+		<string key="IBDocument.SystemVersion">10J567</string>
 		<string key="IBDocument.InterfaceBuilderVersion">823</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
-		<string key="IBDocument.HIToolboxVersion">461.00</string>
+		<string key="IBDocument.HIToolboxVersion">462.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			<string key="NS.object.0">132</string>
@@ -50,7 +50,7 @@
 							<object class="IBUILabel" id="537200946">
 								<reference key="NSNextResponder" ref="742668534"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{20, 2}, {280, 22}}</string>
+								<string key="NSFrame">{{20, 20}, {280, 22}}</string>
 								<reference key="NSSuperview" ref="742668534"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -82,7 +82,7 @@
 							<object class="IBUILabel" id="934079087">
 								<reference key="NSNextResponder" ref="742668534"/>
 								<int key="NSvFlags">292</int>
-								<string key="NSFrame">{{20, 20}, {280, 21}}</string>
+								<string key="NSFrame">{{20, 0}, {280, 21}}</string>
 								<reference key="NSSuperview" ref="742668534"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -183,8 +183,8 @@
 						<reference key="object" ref="384143476"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="537200946"/>
 							<reference ref="934079087"/>
+							<reference ref="537200946"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -223,11 +223,11 @@
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBoAAAwdgAAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABBoAAAwiAAAA</bytes>
 					</object>
 					<string>com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 					<object class="NSAffineTransform">
-						<bytes key="NSTransformStruct">P4AAAL+AAABBoAAAwhwAAA</bytes>
+						<bytes key="NSTransformStruct">P4AAAL+AAABBoAAAwagAAA</bytes>
 					</object>
 				</object>
 			</object>

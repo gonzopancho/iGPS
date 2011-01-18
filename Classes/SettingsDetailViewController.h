@@ -15,6 +15,6 @@
 
 @property (nonatomic, retain) NSDictionary *data;
 @property (nonatomic, retain) NSString *keyForData;
-@property (nonatomic, assign) int selectedRow;
+@property (nonatomic, retain) NSNumber *selectedRow;
 
 @end

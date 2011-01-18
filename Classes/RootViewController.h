@@ -20,7 +20,7 @@
 }
 
 @property (nonatomic, retain) LocationProvider *locationProvider;
-@property (nonatomic, retain) NSDictionary *data;
+@property (retain) NSMutableArray *tableData;
 @property (nonatomic, retain) NSMutableArray *values;
 @property (nonatomic, retain) NSArray *names;
 @property (nonatomic, assign) SEL altitudeUnitsSelelector;

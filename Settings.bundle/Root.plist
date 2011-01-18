@@ -41,8 +41,12 @@
 		<dict>
 			<key>Type</key>
 			<string>PSSliderSpecifier</string>
+			<key>MinimumValueImage</key>
+			<string>pin.png</string>
 			<key>Key</key>
 			<string>distance</string>
+			<key>MaximumValueImage</key>
+			<string>globe.png</string>
 			<key>DefaultValue</key>
 			<integer>10</integer>
 			<key>MinimumValue</key>

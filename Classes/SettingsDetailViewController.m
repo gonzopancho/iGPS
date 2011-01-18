@@ -35,11 +35,11 @@
     return keyForData;
 }
 
-- (int)selectedRow {
+- (NSNumber *)selectedRow {
     
     if (!selectedRow) {
         NSNumber *temp = [[NSUserDefaults standardUserDefaults] objectForKey:self.keyForData];
-        self.selectedRow = [temp intValue];
+        self.selectedRow = temp;
     }
     
     return selectedRow;
@@ -59,7 +59,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:self.selectedRow] forKey:self.keyForData];
+    [[NSUserDefaults standardUserDefaults] setObject:self.selectedRow forKey:self.keyForData];
     [[NSNotificationCenter defaultCenter] postNotificationName:self.keyForData object:nil];
 
 }
@@ -96,7 +96,7 @@
     
     cell.textLabel.text = [labels objectAtIndex:indexPath.row];
     
-    if (indexPath.row == self.selectedRow) {
+    if (indexPath.row == [self.selectedRow intValue]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;
     } else cell.accessoryType = UITableViewCellAccessoryNone;
     
@@ -110,8 +110,8 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    if (indexPath.row != self.selectedRow) {
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:self.selectedRow inSection:0]];
+    if (indexPath.row != [self.selectedRow intValue]) {
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedRow intValue] inSection:0]];
         [cell setAccessoryType:UITableViewCellAccessoryNone];
         UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:indexPath];
         [newCell setAccessoryType:UITableViewCellAccessoryCheckmark];
@@ -120,7 +120,7 @@
         [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         
         
-        self.selectedRow = indexPath.row;
+        self.selectedRow = [NSNumber numberWithInt:indexPath.row];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
@@ -144,6 +144,7 @@
 
 
 - (void)dealloc {
+    [selectedRow release];
     [keyForData release];
     [data release];
     [super dealloc];

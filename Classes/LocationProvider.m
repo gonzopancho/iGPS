@@ -65,14 +65,10 @@
     
 }
 
-- (void)defaultsChanged:(NSNotification *)aNotification {
-    NSLog(@"data has been changed, LocationProvider");
-}
-
 - (void)accuracyChanged:(NSNotification *)aNotification {
     
-         NSLog(@"!!!!!!!!!!!!!accuracyChanged!!!!!!!!!!!!!");
-   
+    NSNumber *accuracyValue = [[NSUserDefaults standardUserDefaults] objectForKey:kAccuracyKey];
+    [self setAccuracy:[accuracyValue intValue]];
 }
 
 
@@ -439,7 +435,7 @@
 #pragma mark MemoryManagement
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:@"accuracy" object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [locationManager release];
     [delegate release];
     [super dealloc];

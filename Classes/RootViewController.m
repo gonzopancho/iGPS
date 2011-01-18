@@ -13,13 +13,13 @@
 
 
 @synthesize locationProvider;
-@synthesize data;
 @synthesize names;
 @synthesize values;
 @synthesize speedUnitsSelector;
 @synthesize altitudeUnitsSelelector; 
 @synthesize headingSelector;
 @synthesize courseSelector;
+@synthesize tableData;
 
 static int kCapacity = 6;
 
@@ -419,9 +419,9 @@ static int kCapacity = 6;
 
 
 - (void)dealloc {
+    [tableData release];
     [names release];
     [values release];
-    [data release];
     [locationProvider release];
     [super dealloc];
 }
