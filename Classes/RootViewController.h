@@ -17,17 +17,15 @@
     IBOutlet iGPSCustomTableViewCell *tableCell;
     
         // !!!!! ZOMBIES SU ZAPNUTE !!!!!
+        //dorobit nastavenia h a v accuracy
+        //inicializacia selektorov h a v accuracy
+        //upravit nacitavanie dat do tabulky
+        //spravit selectory privatne!
 }
 
 @property (nonatomic, retain) LocationProvider *locationProvider;
-@property (retain) NSMutableArray *tableData;
 @property (nonatomic, retain) NSMutableArray *values;
 @property (nonatomic, retain) NSArray *names;
-@property (nonatomic, assign) SEL altitudeUnitsSelelector;
-@property (nonatomic, assign) SEL speedUnitsSelector;
-@property (nonatomic, assign) SEL headingSelector;
-@property (nonatomic, assign) SEL courseSelector;
-
 
 
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;

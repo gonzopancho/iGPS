@@ -22,9 +22,9 @@
 		3B29100112CF5ED9002148B5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B29100012CF5ED9002148B5 /* Constants.m */; };
 		3B8C528812D8472400793C6F /* iGPSCustomTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */; };
 		3B8C52A412D850F800793C6F /* TableCellView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3B8C52A312D850F800793C6F /* TableCellView.xib */; };
-		3B8C53F312DA787C00793C6F /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B8C53F212DA787C00793C6F /* Settings.bundle */; };
 		3B8C540E12DA7A6A00793C6F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3B8C540D12DA7A6A00793C6F /* Localizable.strings */; };
 		3B8C54D612DAECF400793C6F /* LocalizationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B8C54D512DAECF400793C6F /* LocalizationHandler.m */; };
+		3B9B917312E75E9100B19A25 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B9B917212E75E9100B19A25 /* Settings.bundle */; };
 		3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7B67F12CD397F00852765 /* SettingsViewController.m */; };
 		3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC7B68012CD397F00852765 /* SettingsViewController.xib */; };
 /* End PBXBuildFile section */
@@ -54,11 +54,11 @@
 		3B8C528612D8472400793C6F /* iGPSCustomTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iGPSCustomTableViewCell.h; sourceTree = "<group>"; };
 		3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iGPSCustomTableViewCell.m; sourceTree = "<group>"; };
 		3B8C52A312D850F800793C6F /* TableCellView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableCellView.xib; sourceTree = "<group>"; };
-		3B8C53F212DA787C00793C6F /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		3B8C540B12DA7A6200793C6F /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3B8C540F12DA7A8200793C6F /* sk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = sk; path = sk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3B8C54D412DAECF400793C6F /* LocalizationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizationHandler.h; sourceTree = "<group>"; };
 		3B8C54D512DAECF400793C6F /* LocalizationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalizationHandler.m; sourceTree = "<group>"; };
+		3B9B917212E75E9100B19A25 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		3BC7B67E12CD397F00852765 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		3BC7B67F12CD397F00852765 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		3BC7B68012CD397F00852765 /* SettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = Classes/SettingsViewController.xib; sourceTree = "<group>"; };
@@ -137,7 +137,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3B8C53F212DA787C00793C6F /* Settings.bundle */,
+				3B9B917212E75E9100B19A25 /* Settings.bundle */,
 				3BC7B68012CD397F00852765 /* SettingsViewController.xib */,
 				28F335F01007B36200424DE2 /* RootViewController.xib */,
 				28AD735F0D9D9599002E5188 /* MainWindow.xib */,
@@ -214,8 +214,8 @@
 				28F335F11007B36200424DE2 /* RootViewController.xib in Resources */,
 				3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */,
 				3B8C52A412D850F800793C6F /* TableCellView.xib in Resources */,
-				3B8C53F312DA787C00793C6F /* Settings.bundle in Resources */,
 				3B8C540E12DA7A6A00793C6F /* Localizable.strings in Resources */,
+				3B9B917312E75E9100B19A25 /* Settings.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

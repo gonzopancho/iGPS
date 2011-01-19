@@ -36,7 +36,7 @@
 			<key>Type</key>
 			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
-			<string>Distance to filter</string>
+			<string>Distance filter</string>
 			<key>Key</key>
 			<string>distance</string>
 			<key>DefaultValue</key>
@@ -107,6 +107,45 @@
 			<string>Display Format</string>
 		</dict>
 		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Coordinates</string>
+			<key>Key</key>
+			<string>coords</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>DMS</string>
+				<string>Degrees decimal</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Accuracy</string>
+			<key>Key</key>
+			<string>accUnits</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>Metres</string>
+				<string>Kilometres</string>
+				<string>Foots</string>
+				<string>Miles</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+				<integer>2</integer>
+				<integer>3</integer>
+			</array>
+		</dict>
+		<dict>
 			<key>Values</key>
 			<array>
 				<integer>0</integer>
@@ -115,7 +154,7 @@
 			<key>Type</key>
 			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
-			<string>Coordinates</string>
+			<string>Course</string>
 			<key>Key</key>
 			<string>course</string>
 			<key>DefaultValue</key>

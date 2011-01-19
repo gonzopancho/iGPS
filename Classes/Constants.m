@@ -12,7 +12,10 @@
 NSString * const kNorthKey     = @"north";
 NSString * const kDistanceKey  = @"distance";
 NSString * const kAccuracyKey  = @"accuracy";
+NSString * const kAccUnitsKey  = @"accUnits";
 NSString * const kSpeedKey     = @"speed";
 NSString * const kAltitudeKey  = @"alt";
 NSString * const kCourseKey    = @"course";
 NSString * const kFirstNameKey = @"firstNameKey";
+NSString * const kCoordsKey    = @"coords";
+

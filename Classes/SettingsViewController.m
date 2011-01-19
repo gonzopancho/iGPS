@@ -39,6 +39,8 @@
             NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
             
             self.tableData = [NSArray arrayWithArray:[dict objectForKey:@"PreferenceSpecifiers"]];
+            
+        
             //});
         
             //dispatch_release(dataQueue);
@@ -128,7 +130,9 @@
             }
             
             if ([subArray count] > 0) [mainArray addObject:[NSArray arrayWithArray:subArray]];
-            
+        
+        
+        
             self.rowsForAllSections = mainArray;
             
             
@@ -181,7 +185,7 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     
-    return [[self.sections objectAtIndex:section] objectForKey:@"Title"];
+    return NSLocalizedString([[self.sections objectAtIndex:section] objectForKey:@"Title"],nil);
 }
 
 
@@ -197,12 +201,12 @@
     
     NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
-    cell.textLabel.text = [row objectForKey:@"Title"];
+    cell.textLabel.text = NSLocalizedString([row objectForKey:@"Title"],nil);
     
     if ([[row objectForKey:@"Type"] isEqual:@"PSMultiValueSpecifier"]) {
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        cell.detailTextLabel.text = [GPSDataFormatter textValueFromDictionary:row];
+        cell.detailTextLabel.text = NSLocalizedString([GPSDataFormatter textValueFromDictionary:row],nil);
         
     } else if ([[row objectForKey:@"Type"] isEqual:@"PSSliderSpecifier"]) {
         
@@ -234,7 +238,7 @@
                                              initWithNibName:@"SettingsViewController"
                                              bundle:nil];
         
-        [dvc setTitle:[row objectForKey:@"Title"]];
+        [dvc setTitle:NSLocalizedString([row objectForKey:@"Title"],nil)];
         [self.navigationController pushViewController:dvc animated:YES];
         [dvc release];
     }

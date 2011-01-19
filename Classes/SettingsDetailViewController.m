@@ -32,6 +32,7 @@
 - (NSString *)keyForData {
     
     self.keyForData = [[[NSString alloc] initWithString:[self.data objectForKey:@"Key"]] autorelease];
+    NSLog(@"keyForData: %@",keyForData);
     return keyForData;
 }
 
@@ -94,7 +95,7 @@
         
     NSArray *labels = [self.data objectForKey:@"Titles"];
     
-    cell.textLabel.text = [labels objectAtIndex:indexPath.row];
+    cell.textLabel.text = NSLocalizedString([labels objectAtIndex:indexPath.row],nil);
     
     if (indexPath.row == [self.selectedRow intValue]) {
         cell.accessoryType = UITableViewCellAccessoryCheckmark;

@@ -9,9 +9,27 @@
 #import "RootViewController.h"
 #import "Constants.h"
 
+@interface RootViewController ()
+
+@property (nonatomic, assign) SEL latitudeSelector;
+@property (nonatomic, assign) SEL longitudeSelector;
+@property (nonatomic, assign) SEL altitudeUnitsSelelector;
+@property (nonatomic, assign) SEL speedUnitsSelector;
+@property (nonatomic, assign) SEL headingSelector;
+@property (nonatomic, assign) SEL courseSelector;
+@property (nonatomic, assign) SEL hAccuracySelector;
+@property (nonatomic, assign) SEL vAccuracySelector;
+
+- (void)setupAccuracySelectors;
+- (void)setupCoordinatesSelector;
+
+@end
+
+
 @implementation RootViewController
 
-
+@synthesize latitudeSelector;
+@synthesize longitudeSelector;
 @synthesize locationProvider;
 @synthesize names;
 @synthesize values;
@@ -19,7 +37,8 @@
 @synthesize altitudeUnitsSelelector; 
 @synthesize headingSelector;
 @synthesize courseSelector;
-@synthesize tableData;
+@synthesize hAccuracySelector;
+@synthesize vAccuracySelector;
 
 
 
@@ -92,10 +111,12 @@
 - (void)setupAllSelectors {
     
     NSLog(@"setupAllSelectors");
+    [self setupCoordinatesSelector];
     [self setupHeadingSelectorByDefaults];
     [self setupAltitudeUnitsSelelectorByDefaults];
     [self setupSpeedUnitsSelectorByDefaults];
     [self setupCourseSelectorByDefaults];
+    [self setupAccuracySelectors];
    
     
 }
@@ -124,6 +145,7 @@
     }
     
 }
+
 
 - (void)setupAltitudeUnitsSelelectorByDefaults {
     
@@ -175,6 +197,94 @@
     
 }
 
+- (int)defaultsValueForKey:(NSString *)accuracyUnitsKey {
+    NSNumber *accuracyUnits = [[NSUserDefaults standardUserDefaults] objectForKey:accuracyUnitsKey];
+    return [accuracyUnits intValue];
+}
+
+- (void)setupHorizontalAccuracySelectorByValue:(int)aValue {
+    
+    switch (aValue) {
+        case 1:
+            self.hAccuracySelector = @selector(horizontalAccuracyInKilometres);
+            break;
+        case 2:
+            self.hAccuracySelector = @selector(horizontalAccuracyInFeet);
+            break;
+        case 3:
+            self.hAccuracySelector = @selector(horizontalAccuracyInMiles);
+            break;
+        default:
+            self.hAccuracySelector = @selector(horizontalAccuracyInMeters);
+            break;
+    }
+    
+    
+}
+
+- (void)setupVerticalAccuracySelectorByValue:(int)aValue {
+    
+    switch (aValue) {
+        case 1:
+            self.vAccuracySelector = @selector(verticalAccuracyInKilometres);
+            break;
+        case 2:
+            self.vAccuracySelector = @selector(verticalAccuracyInFeet);
+            break;
+        case 3:
+            self.vAccuracySelector = @selector(verticalAccuracyInMiles);
+            break;
+        default:
+            self.vAccuracySelector = @selector(verticalAccuracyInMeters);
+            break;
+    }
+    
+    
+}
+
+- (void)setupAccuracySelectors {
+    
+    int value = [self defaultsValueForKey:kAccUnitsKey];
+    [self setupHorizontalAccuracySelectorByValue:value];
+    [self setupVerticalAccuracySelectorByValue:value];
+}
+
+
+- (void)setupLatitudeSelectorByValue:(int)aValue {
+    
+    switch (aValue) {
+        case 1:
+            self.latitudeSelector = @selector(latitudeInDegDec);
+            break;
+        default:
+            self.latitudeSelector = @selector(latitudeInDMS);
+            break;
+    }
+    
+}
+
+
+- (void)setupLongitudeSelectorByValue:(int)aValue {
+    
+    switch (aValue) {
+        case 1:
+            self.longitudeSelector = @selector(longitudeInDegDec);
+            break;
+        default:
+            self.longitudeSelector = @selector(longitudeInDMS);
+            break;
+    }
+    
+}
+
+- (void)setupCoordinatesSelector {
+    
+    int value = [self defaultsValueForKey:kCoordsKey];
+    [self setupLatitudeSelectorByValue:value];
+    [self setupLongitudeSelectorByValue:value];
+    
+}
+
 - (void)locationProviderDidUpdateLocation {
     
     NSLog(@"locationProviderDidUpdateLocation");    
@@ -203,7 +313,7 @@
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
     
-    [self updateCellForIndexPath:indexPath withSelector:@selector(latitudeInDMS)];
+    [self updateCellForIndexPath:indexPath withSelector:self.latitudeSelector];
     
 }
 
@@ -212,7 +322,7 @@
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];    
     
-    [self updateCellForIndexPath:indexPath withSelector:@selector(longitudeInDMS)];
+    [self updateCellForIndexPath:indexPath withSelector:self.longitudeSelector];
     
 }
 
@@ -245,6 +355,24 @@
     
 }
 
+
+- (void)locationProviderDidUpdateVerticalAccuracy {
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Vertical accuracy",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.vAccuracySelector];
+    
+}
+
+
+- (void)locationProviderDidUpdateHorizontalAccuracy {
+    
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Horizontal accuracy",nil)] inSection:0];
+    
+    [self updateCellForIndexPath:indexPath withSelector:self.hAccuracySelector];
+    
+}
+
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
     
     NSLog(@"Index Value: %i",index.row);
@@ -257,14 +385,17 @@
 
 - (void)setupValues {
     
-    NSString *vAccuracy = [NSString stringWithString:[self.locationProvider verticalAccuracy]];
+    NSString *vAccuracy = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.vAccuracySelector]];
     
-    NSString *hAccuracy = [NSString stringWithString:[self.locationProvider horizontalAccuracy]];
+    NSString *hAccuracy = [NSString stringWithString:
+                           [self.locationProvider performSelector:self.hAccuracySelector]];
     
     NSString *latitude  = [NSString stringWithString:
-                           [self.locationProvider latitudeInDMS]];
+                           [self.locationProvider performSelector:self.latitudeSelector]];
+    
     NSString *longitude = [NSString stringWithString:
-                           [self.locationProvider longitudeInDMS]];
+                           [self.locationProvider performSelector:self.longitudeSelector]];
     
     NSString *altitude  = [NSString stringWithString:
                            [self.locationProvider performSelector:self.altitudeUnitsSelelector]];
@@ -298,8 +429,6 @@
 
 - (void)loadData {
     
-    NSLog(@"%@",[self.locationProvider verticalAccuracy]);
-    NSLog(@"%@",[self.locationProvider horizontalAccuracy]);
     [self setupValues];
     [self setupNames];
 
@@ -425,7 +554,6 @@
 
 
 - (void)dealloc {
-    [tableData release];
     [names release];
     [values release];
     [locationProvider release];

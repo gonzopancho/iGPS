@@ -41,7 +41,9 @@
         NSNumber *northDefault    = [NSNumber numberWithInt:0];
         NSNumber *distanceDefault = [NSNumber numberWithInt:10];
         NSNumber *accuracyDefault = [NSNumber numberWithInt:0];
+        NSNumber *accUnitsDefault = [NSNumber numberWithInt:0];
         NSNumber *courseDefault   = [NSNumber numberWithInt:0];
+        NSNumber *coordsDefault   = [NSNumber numberWithInt:0];
         
         NSDictionary *prefItem;
         for (prefItem in prefSpecifierArray) {
@@ -67,16 +69,24 @@
             else if ([keyValueStr isEqualToString:kCourseKey]) {
                 courseDefault = defaultValue;
             }
+            else if ([keyValueStr isEqualToString:kAccUnitsKey]) {
+                accUnitsDefault = defaultValue;
+            }
+            else if ([keyValueStr isEqualToString:kCoordsKey]) {
+                coordsDefault = defaultValue;
+            }
         }
         
             // since no default values have been set (i.e. no preferences file created), create it here     
         NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
                                      speedDefault, kSpeedKey,
                                      accuracyDefault, kAccuracyKey,
+                                     accUnitsDefault, kAccUnitsKey,
                                      altitudeDefault, kAltitudeKey,
                                      northDefault, kNorthKey,
                                      distanceDefault, kDistanceKey,
                                      courseDefault, kCourseKey,
+                                     coordsDefault,kCoordsKey,
                                      nil];
         
         [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];

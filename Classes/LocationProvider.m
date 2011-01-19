@@ -62,13 +62,23 @@
                                              selector:@selector(accuracyChanged:)
                                                  name:kAccuracyKey
                                                object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(distanceFilterChanged:) 
+                                                 name:kDistanceKey
+                                               object:nil];
 }
 
 - (void)accuracyChanged:(NSNotification *)aNotification {
     
     NSNumber *accuracyValue = [[NSUserDefaults standardUserDefaults] objectForKey:kAccuracyKey];
     [self setAccuracy:[accuracyValue intValue]];
+}
+
+- (void)distanceFilterChanged:(NSNotification *)aNotification {
+    
+    NSNumber *newDistanceFilterValue = [[NSUserDefaults standardUserDefaults] objectForKey:kDistanceKey];
+    [self setDistanceFilter:[newDistanceFilterValue intValue]];
+    
 }
 
 
@@ -341,49 +351,55 @@
 
     //vertical accuracy
 
+- (BOOL)isAccuracyValid:(double)accuracy {
+    
+    if (accuracy > 0) return YES;
+    return NO;
+}
+
 - (NSString *)verticalAccuracyInMeters {
  
-    return nil;
+    return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.verticalAccuracy];
 }
 
 
 - (NSString *)verticalAccuracyInKilometres {
 
-    return nil;
+    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.verticalAccuracy * 0.001];
 }
 
 
 - (NSString *)verticalAccuracyInFeet {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.2f ft",self.locationManager.location.verticalAccuracy * 3.28083];
 }
 
 
 - (NSString *)verticalAccuracyInMiles {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.verticalAccuracy * 0.000621371192];
 }
 
     //horizontal accuracy
 
 - (NSString *)horizontalAccuracyInMeters {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.horizontalAccuracy];
 }
 
 - (NSString *)horizontalAccuracyInKilometres {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.horizontalAccuracy * 0.001];
 }
 
 - (NSString *)horizontalAccuracyInFeet {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.2f ft",self.locationManager.location.horizontalAccuracy * 3.28083];
 }
 
 - (NSString *)horizontalAccuracyInMiles {
     
-    return nil;
+    return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.horizontalAccuracy * 0.000621371192];
 }
 
 #pragma mark -

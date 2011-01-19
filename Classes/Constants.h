@@ -12,8 +12,10 @@
 extern NSString * const kNorthKey;
 extern NSString * const kDistanceKey;
 extern NSString * const kAccuracyKey;
+extern NSString * const kAccUnitsKey;
 extern NSString * const kSpeedKey;
 extern NSString * const kAltitudeKey;
 extern NSString * const kCourseKey;
 extern NSString * const kFirstNameKey;
+extern NSString * const kCoordsKey;
 
