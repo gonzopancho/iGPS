@@ -10,7 +10,7 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
-			<string>Compass</string>
+			<string>GPS settings</string>
 		</dict>
 		<dict>
 			<key>Type</key>
@@ -34,31 +34,43 @@
 		</dict>
 		<dict>
 			<key>Type</key>
-			<string>PSGroupSpecifier</string>
+			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
-			<string>Distance Filter</string>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSSliderSpecifier</string>
-			<key>MinimumValueImage</key>
-			<string>pin.png</string>
+			<string>Distance to filter</string>
 			<key>Key</key>
 			<string>distance</string>
-			<key>MaximumValueImage</key>
-			<string>globe.png</string>
 			<key>DefaultValue</key>
-			<integer>10</integer>
-			<key>MinimumValue</key>
-			<integer>10</integer>
-			<key>MaximumValue</key>
-			<integer>1500</integer>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Desired Accuracy</string>
+			<string>10</string>
+			<key>Titles</key>
+			<array>
+				<string>10 m</string>
+				<string>50 m</string>
+				<string>100 m</string>
+				<string>150 m</string>
+				<string>300 m</string>
+				<string>500 m</string>
+				<string>700 m</string>
+				<string>1000 m</string>
+				<string>1500 m</string>
+				<string>2000 m</string>
+				<string>2500 m</string>
+				<string>3000 m</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<integer>10</integer>
+				<integer>50</integer>
+				<integer>100</integer>
+				<integer>150</integer>
+				<integer>300</integer>
+				<integer>500</integer>
+				<integer>700</integer>
+				<integer>1000</integer>
+				<integer>1500</integer>
+				<integer>2000</integer>
+				<integer>2500</integer>
+				<integer>3000</integer>
+			</array>
 		</dict>
 		<dict>
 			<key>Type</key>
@@ -92,7 +104,27 @@
 			<key>Type</key>
 			<string>PSGroupSpecifier</string>
 			<key>Title</key>
-			<string>Units</string>
+			<string>Display Format</string>
+		</dict>
+		<dict>
+			<key>Values</key>
+			<array>
+				<integer>0</integer>
+				<integer>1</integer>
+			</array>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
+			<string>Coordinates</string>
+			<key>Key</key>
+			<string>course</string>
+			<key>DefaultValue</key>
+			<integer>0</integer>
+			<key>Titles</key>
+			<array>
+				<string>Degrees only</string>
+				<string>Degrees with direction</string>
+			</array>
 		</dict>
 		<dict>
 			<key>Type</key>
@@ -142,32 +174,6 @@
 				<integer>1</integer>
 				<integer>2</integer>
 				<integer>3</integer>
-			</array>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-			<key>Title</key>
-			<string>Course Display Format</string>
-		</dict>
-		<dict>
-			<key>Values</key>
-			<array>
-				<integer>0</integer>
-				<integer>1</integer>
-			</array>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Title</key>
-			<string>Current Format</string>
-			<key>Key</key>
-			<string>course</string>
-			<key>DefaultValue</key>
-			<integer>0</integer>
-			<key>Titles</key>
-			<array>
-				<string>Degrees only</string>
-				<string>Degrees with direction</string>
 			</array>
 		</dict>
 	</array>

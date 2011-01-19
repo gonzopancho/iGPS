@@ -21,7 +21,6 @@
 @synthesize courseSelector;
 @synthesize tableData;
 
-static int kCapacity = 6;
 
 
 #pragma mark -
@@ -76,8 +75,9 @@ static int kCapacity = 6;
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];     
     
     [self viewWillAppear:NO];
-    [self.navigationController setToolbarHidden:YES animated:YES];
-    [self.navigationController setToolbarHidden:NO animated:YES];
+    [self.navigationController loadView];
+        //    [self.navigationController setToolbarHidden:YES animated:YES];
+        //    [self.navigationController setToolbarHidden:NO animated:YES];
     
     
 }
@@ -257,6 +257,10 @@ static int kCapacity = 6;
 
 - (void)setupValues {
     
+    NSString *vAccuracy = [NSString stringWithString:[self.locationProvider verticalAccuracy]];
+    
+    NSString *hAccuracy = [NSString stringWithString:[self.locationProvider horizontalAccuracy]];
+    
     NSString *latitude  = [NSString stringWithString:
                            [self.locationProvider latitudeInDMS]];
     NSString *longitude = [NSString stringWithString:
@@ -274,13 +278,15 @@ static int kCapacity = 6;
     NSString *course    = [NSString stringWithString:
                            [self.locationProvider performSelector:self.courseSelector]];
     
-    self.values = [NSMutableArray arrayWithObjects:latitude,longitude,heading,altitude,speed,course,nil];
+    self.values = [NSMutableArray arrayWithObjects:vAccuracy,hAccuracy,latitude,longitude,heading,altitude,speed,course,nil];
     
 }
 
 - (void)setupNames {
     
     self.names = [NSArray arrayWithObjects:
+                  NSLocalizedString(@"Vertical accuracy",nil),
+                  NSLocalizedString(@"Horizontal accuracy",nil),
                   NSLocalizedString(@"Latitude",nil),
                   NSLocalizedString(@"Longitude",nil),
                   NSLocalizedString(@"Heading",nil),

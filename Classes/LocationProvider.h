@@ -20,6 +20,8 @@
 - (void)locationProviderDidUpdateSpeed;
 - (void)locationProviderDidUpdateCourse;
 - (void)locationProviderDidUpdateHeading;
+- (void)locationProviderDidUpdateHorizontalAccuracy;
+- (void)locationProviderDidUpdateVerticalAccuracy;
 @end
 
 @interface LocationProvider : NSObject <CLLocationManagerDelegate>  {
@@ -69,8 +71,15 @@
 - (NSString *)courseInDegrees;
 - (NSString *)courseMixed;
 
-- (NSString *)verticalAccuracy;
-- (NSString *)horizontalAccuracy;
+- (NSString *)verticalAccuracyInMeters;
+- (NSString *)verticalAccuracyInKilometres;
+- (NSString *)verticalAccuracyInFeet;
+- (NSString *)verticalAccuracyInMiles;
+
+- (NSString *)horizontalAccuracyInMeters;
+- (NSString *)horizontalAccuracyInKilometres;
+- (NSString *)horizontalAccuracyInFeet;
+- (NSString *)horizontalAccuracyInMiles;
 
     //setAccuracy
     //setDistanceFilter

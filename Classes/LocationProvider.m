@@ -339,16 +339,51 @@
     return stringToReturn;
 }
 
-    //Accuracy
+    //vertical accuracy
 
-- (NSString *)verticalAccuracy {
-    
-    return [NSString stringWithFormat:@"%.2f",self.locationManager.location.verticalAccuracy];
+- (NSString *)verticalAccuracyInMeters {
+ 
+    return nil;
 }
 
-- (NSString *)horizontalAccuracy {
+
+- (NSString *)verticalAccuracyInKilometres {
+
+    return nil;
+}
+
+
+- (NSString *)verticalAccuracyInFeet {
     
-    return [NSString stringWithFormat:@"%.2f",self.locationManager.location.horizontalAccuracy];
+    return nil;
+}
+
+
+- (NSString *)verticalAccuracyInMiles {
+    
+    return nil;
+}
+
+    //horizontal accuracy
+
+- (NSString *)horizontalAccuracyInMeters {
+    
+    return nil;
+}
+
+- (NSString *)horizontalAccuracyInKilometres {
+    
+    return nil;
+}
+
+- (NSString *)horizontalAccuracyInFeet {
+    
+    return nil;
+}
+
+- (NSString *)horizontalAccuracyInMiles {
+    
+    return nil;
 }
 
 #pragma mark -
@@ -397,7 +432,18 @@
             }
             
         }
-         
+        
+        if (oldLocation.verticalAccuracy != newLocation.verticalAccuracy) {
+            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateVerticalAccuracy)]) {
+                [[self delegate] locationProviderDidUpdateVerticalAccuracy];
+            }
+        }
+        
+        if (oldLocation.horizontalAccuracy != newLocation.horizontalAccuracy) {
+            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateHorizontalAccuracy)]) {
+                [[self delegate] locationProviderDidUpdateHorizontalAccuracy];
+            }
+        }
     }
 }
 
