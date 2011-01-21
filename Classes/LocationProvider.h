@@ -37,7 +37,7 @@
 
 
 
-- (id)initAndStartMonitoringLocation;
+- (id)init;
 
 - (void)startUpdatingLocationAndHeading;
 - (void)stopUpdatingLocationAndHeading;

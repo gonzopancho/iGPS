@@ -22,11 +22,9 @@
 #pragma mark -
 #pragma mark Initialization
 
-- (id)initAndStartMonitoringLocation {
+- (id)init {
     
     if ((self = [super init])) {
-       
-        [self startUpdatingLocationAndHeading];
         [self performSelector:@selector(setupKeyValueObserverving)];
     }
     return self;

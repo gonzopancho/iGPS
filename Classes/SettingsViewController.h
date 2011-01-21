@@ -20,9 +20,17 @@
 @property (nonatomic, retain) NSArray *tableData;
 @property (nonatomic, retain) NSArray *rowsForAllSections;
 @property (nonatomic, retain) NSArray *sections;
+@property (nonatomic, retain) NSArray *defaultValues;
 
 
 - (IBAction)done:(id)sender;
+
+    //setup Methods
+- (void)setupAndLoadTable;
+- (void)setupTableData;
+- (void)setUpDefaultValues;
+- (void)setupRowsForAllSections;
+- (void)setupSections;
 
 @end
 

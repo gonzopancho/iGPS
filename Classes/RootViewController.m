@@ -8,6 +8,7 @@
 
 #import "RootViewController.h"
 #import "Constants.h"
+#import <dispatch/dispatch.h>
 
 @interface RootViewController ()
 
@@ -48,6 +49,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if (!self.locationProvider) {
+        self.locationProvider = [[LocationProvider alloc] init];
+        [self.locationProvider setDelegate:self];
+    }
+    
+    
+    [self.navigationController setToolbarHidden:NO animated:YES];
     
     self.title = @"iGPS";
     
@@ -94,6 +103,7 @@
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];     
     
     [self viewWillAppear:NO];
+        //[self.tableView reloadData];
     [self.navigationController loadView];
         //    [self.navigationController setToolbarHidden:YES animated:YES];
         //    [self.navigationController setToolbarHidden:NO animated:YES];
@@ -102,14 +112,12 @@
 }
 
 - (void)settingsViewControllerDidFinish:(SettingsViewController *)controller {
-    
     [self.tableView reloadData];
-    
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)setupAllSelectors {
-    
+        // NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSLog(@"setupAllSelectors");
     [self setupCoordinatesSelector];
     [self setupHeadingSelectorByDefaults];
@@ -117,7 +125,7 @@
     [self setupSpeedUnitsSelectorByDefaults];
     [self setupCourseSelectorByDefaults];
     [self setupAccuracySelectors];
-   
+        // [pool drain];
     
 }
 
@@ -294,63 +302,106 @@
     
     iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
     NSString *label = [self.locationProvider performSelector:aSelector];
-    [cell setMainTextLabel:label];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [cell setMainTextLabel:label];
+    });
+    
     NSLog(@"label: %@, index: %d",label,indexPath.row);
     [self setStringValue:label atIndex:indexPath];
 }
 
+
 - (void)locationProviderDidUpdateHeading {
         //NSLog(@"locationProviderDidUpdateHeading");
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Heading",nil)] inSection:0];
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.headingSelector];
-    
+    dispatch_queue_t headingQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.HeadingQueue", NULL);
+    dispatch_async(headingQueue, ^{
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Heading",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.headingSelector];
+    });
+    dispatch_release(headingQueue);
     
 }
 
 - (void)locationProviderDidUpdateLatitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
+    dispatch_queue_t latitudeQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.LatitudeQueue", NULL);
+    dispatch_async(latitudeQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.latitudeSelector];
+        
+    });
+    dispatch_release(latitudeQueue);
     
-    [self updateCellForIndexPath:indexPath withSelector:self.latitudeSelector];
     
 }
 
 
 - (void)locationProviderDidUpdateLongitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];    
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.longitudeSelector];
-    
+    dispatch_queue_t longitudeQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.LongitudeQueue", NULL);
+    dispatch_async(longitudeQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)] inSection:0];    
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.longitudeSelector];
+        
+        
+    });
+    dispatch_release(longitudeQueue);
+        
 }
 
 
 - (void)locationProviderDidUpdateAltitude {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.altitudeUnitsSelelector];
-    
+    dispatch_queue_t altitudeQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.LatitudeQueue", NULL);
+    dispatch_async(altitudeQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.altitudeUnitsSelelector];
+        
+        
+    });
+    dispatch_release(altitudeQueue);
+        
     
 }
 
 
 - (void)locationProviderDidUpdateSpeed {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)] inSection:0];
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.speedUnitsSelector];
-    
+    dispatch_queue_t speedQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.SpeedQueue", NULL);
+    dispatch_async(speedQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.speedUnitsSelector];
+        
+        
+    });
+    dispatch_release(speedQueue);
+        
 }
 
 
 - (void)locationProviderDidUpdateCourse {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)] inSection:0];
+    dispatch_queue_t courseQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.CourseQueue", NULL);
+    dispatch_async(courseQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.courseSelector];
+        
+    });
+    dispatch_release(courseQueue);
     
-    [self updateCellForIndexPath:indexPath withSelector:self.courseSelector];
     
     
 }
@@ -358,19 +409,33 @@
 
 - (void)locationProviderDidUpdateVerticalAccuracy {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Vertical accuracy",nil)] inSection:0];
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.vAccuracySelector];
-    
+    dispatch_queue_t verticalAccQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.VerticalAccQueue", NULL);
+    dispatch_async(verticalAccQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Vertical accuracy",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.vAccuracySelector];
+        
+        
+    });
+    dispatch_release(verticalAccQueue);
+        
 }
 
 
 - (void)locationProviderDidUpdateHorizontalAccuracy {
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Horizontal accuracy",nil)] inSection:0];
-    
-    [self updateCellForIndexPath:indexPath withSelector:self.hAccuracySelector];
-    
+    dispatch_queue_t horizontalAccQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.HorizontalAccQueue", NULL);
+    dispatch_async(horizontalAccQueue, ^{
+        
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Horizontal accuracy",nil)] inSection:0];
+        
+        [self updateCellForIndexPath:indexPath withSelector:self.hAccuracySelector];
+        
+        
+    });
+    dispatch_release(horizontalAccQueue);
+        
 }
 
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
@@ -428,10 +493,12 @@
 }
 
 - (void)loadData {
+        //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     [self setupValues];
     [self setupNames];
-
+    
+        //[pool drain];
 }
 
 
@@ -442,39 +509,38 @@
     SettingsViewController *svc = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
 
     [svc setDelegate:self];
-    [svc setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [svc setTitle:NSLocalizedString(@"Settings",nil)];    
         
     UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:svc];
     [svc release]; 
     
-    [self.navigationController setToolbarHidden:YES animated:YES];
-    
+    [nc setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
     [self presentModalViewController:nc animated:YES];
     [nc release];
+    
     
 	  
     
 }
 
-
+- (void)doSetup {
+    [self setupAllSelectors];
+    [self loadData];
+    [self.tableView reloadData];
+    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
+}
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [self.locationProvider startUpdatingLocationAndHeading];
+      
+        //[NSThread detachNewThreadSelector:@selector(setupAllSelectors) toTarget:self withObject:nil];    
+        //[NSThread detachNewThreadSelector:@selector(loadData) toTarget:self withObject:nil];    
+    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
+    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self selector:@selector(doSetup) object:nil];
+    [queue addOperation:operation];
+    [operation release];
     
-    [self.navigationController setToolbarHidden:NO animated:YES];
-    
-    if (!self.locationProvider) {
-        self.locationProvider = [[LocationProvider alloc] initAndStartMonitoringLocation];
-        [self.locationProvider setDelegate:self];
-    }
-    
-    [self.locationProvider startUpdatingLocationAndHeading];    
-    
-    [self setupAllSelectors];
-    [self loadData];
-    
-    [self.tableView reloadData];
 }
 
 
@@ -490,6 +556,7 @@
 
 
 - (void)viewDidDisappear:(BOOL)animated {
+    [self.locationProvider stopUpdatingLocationAndHeading];
 	[super viewDidDisappear:animated];
 }
 
@@ -513,13 +580,10 @@
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-        //static NSString *CellIdentifier = @"Cell";
     static NSString *CustomCell = @"iGPSCustomTableViewCell";
     
-        // UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     iGPSCustomTableViewCell *cell = (iGPSCustomTableViewCell *)[table dequeueReusableCellWithIdentifier:CustomCell];
     if (cell == nil) {
-            //        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier] autorelease];
         [[NSBundle mainBundle] loadNibNamed:@"TableCellView" owner:self options:nil];
         cell = tableCell;
     }
@@ -538,6 +602,11 @@
     
 }
 
+- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    [table deselectRowAtIndexPath:indexPath animated:YES];
+    
+}
 
 #pragma mark -
 #pragma mark Memory management
@@ -549,7 +618,11 @@
     // Relinquish ownership any cached data, images, etc that aren't in use.
 }
 
-- (void)viewDidUnload {    
+- (void)viewDidUnload {  
+    
+    self.names = nil;
+    self.values = nil;
+    self.locationProvider = nil;
 }
 
 

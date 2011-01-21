@@ -9,7 +9,7 @@
 #import "SettingsViewController.h"
 #import "SettingsDetailViewController.h"
 #import "GPSDataFormatter.h"
-#import <dispatch/dispatch.h>
+#import "Constants.h"
 
 
 
@@ -19,35 +19,100 @@
 @synthesize rowsForAllSections;
 @synthesize sections;
 @synthesize delegate;
+@synthesize defaultValues;
 
 #pragma mark -
 #pragma mark View lifecycle
 
 
 
-- (NSArray *)tableData {
+- (void)setupTableData {
+        
+    NSString *pathStr = [[NSBundle mainBundle] bundlePath];
+    NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
+    NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
     
-    if (tableData == nil) {
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
+    
+    self.tableData = [NSArray arrayWithArray:[dict objectForKey:@"PreferenceSpecifiers"]];
+    
+    NSLog(@"tabledata: %@",[self.tableData description]);
+}
+
+
+    //returns array of rows for all sections
+
+- (void)setupRowsForAllSections {
+    
+    
+    NSMutableArray *subArray = [NSMutableArray array];
+    NSMutableArray *mainArray = [NSMutableArray array];
+    
+        //filters out groups from tableData
+    
+    for (NSDictionary *dict in self.tableData) {
         
-            //dispatch_queue_t dataQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.tableDataAssigmentQueue", NULL);
-            //dispatch_async(dataQueue, ^{
+        if (![[dict objectForKey:@"Type"] isEqual:@"PSGroupSpecifier"]) {
+            [subArray addObject:dict];
+        } else if ([subArray count] > 0) {
             
-            NSString *pathStr = [[NSBundle mainBundle] bundlePath];
-            NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
-            NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
-            
-            NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
-            
-            self.tableData = [NSArray arrayWithArray:[dict objectForKey:@"PreferenceSpecifiers"]];
-            
-        
-            //});
-        
-            //dispatch_release(dataQueue);
+            [mainArray addObject:[NSArray arrayWithArray:subArray]];
+            [subArray removeAllObjects];
+        }
     }
     
-    return tableData;
+    if ([subArray count] > 0) [mainArray addObject:[NSArray arrayWithArray:subArray]];
+    
+    
+    self.rowsForAllSections = mainArray;
+    
+    
 }
+
+
+- (void)setupSections {
+    
+    NSMutableArray *temp = [[[NSMutableArray alloc] init] autorelease];
+    
+    for (NSDictionary *dict in self.tableData) {
+        if ([[dict objectForKey:@"Type"] isEqual:@"PSGroupSpecifier"]) {
+            [temp addObject:dict];
+            NSLog(@"dict found");
+        }
+    }
+    
+    self.sections = temp;
+    
+}
+
+
+- (void)setUpDefaultValues {
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
+    NSMutableArray *temp = [NSMutableArray array];
+    NSMutableArray *storage = [NSMutableArray array];
+    
+    for (int i = 0; i < [self.rowsForAllSections count]; i++) {
+        NSArray *array = [self.rowsForAllSections objectAtIndex:i];
+        
+        for (NSDictionary *element in array) {
+            
+            NSArray *values = [element objectForKey:@"Titles"];
+            
+            NSNumber *defaultValue = [[NSUserDefaults standardUserDefaults] objectForKey:[element objectForKey:@"Key"]];
+            
+            [temp addObject:NSLocalizedString([values objectAtIndex:[defaultValue intValue]],nil)];
+        }
+        [storage addObject:temp];
+        temp = [NSMutableArray array];
+    }
+    
+    self.defaultValues = storage;
+    
+    [pool drain];
+}
+
 
 - (IBAction)done:(id)sender {
 	NSLog(@"done:");
@@ -55,10 +120,12 @@
 }
 
 
-
 - (void)viewDidLoad {
+    [NSThread detachNewThreadSelector:@selector(setUpDefaultValues) toTarget:self withObject:nil];
     [super viewDidLoad];
+    
 }
+
 
 - (NSArray *)toolbarItems {
     
@@ -80,16 +147,37 @@
     
 }
 
+    //   !!!!!PLAYGROUND!!!! 
+
+    
+- (void)setupAndLoadTable {
+    
+    [self setupTableData];
+    [self setupSections];
+    [self setupRowsForAllSections];
+    [self setUpDefaultValues];
+    [self.tableView performSelectorOnMainThread:@selector(reloadData)
+                                     withObject:nil
+                                  waitUntilDone:YES];
+    
+}
+
+
+    // !!!!!PLAYGROUND!!!! END!!!!
 
 - (void)viewWillAppear:(BOOL)animated {
     
     [super viewWillAppear:animated];
-    
-        //[self.tableView performSelectorOnMainThread:@selector(reloadData) 
-        //                           withObject:nil 
-        //                        waitUntilDone:YES];
-    [self.tableView reloadData];
+    NSLog(@"viewWillAppear");
     [self.navigationController setToolbarHidden:NO animated:YES];
+    
+    NSOperationQueue *myQueue = [[[NSOperationQueue alloc] init] autorelease];
+    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self 
+                                                                            selector:@selector(setupAndLoadTable)
+                                                                              object:nil];
+    [myQueue addOperation:operation];
+    [operation release];
+   
 }
 
 
@@ -97,79 +185,12 @@
     [super viewWillDisappear:animated];
 }
 
-/*
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    
-    return YES;
-}
-*/
-
 
 #pragma mark -
 #pragma mark Table view data source
 
-- (NSArray *)rowsForAllSections {
-    
-    if (rowsForAllSections == nil) {
-        
-            //dispatch_queue_t rowQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.rowQueue", NULL);
-            //dispatch_async(rowQueue, ^{
-            
-            NSMutableArray *subArray = [NSMutableArray array];
-            NSMutableArray *mainArray = [NSMutableArray array];
-            
-            for (NSDictionary *dict in self.tableData) {
-                
-                if (![[dict objectForKey:@"Type"] isEqual:@"PSGroupSpecifier"]) {
-                    [subArray addObject:dict];
-                } else if ([subArray count] > 0) {
-                    
-                    [mainArray addObject:[NSArray arrayWithArray:subArray]];
-                    [subArray removeAllObjects];
-                }
-            }
-            
-            if ([subArray count] > 0) [mainArray addObject:[NSArray arrayWithArray:subArray]];
-        
-        
-        
-            self.rowsForAllSections = mainArray;
-            
-            
-            //});
-            //dispatch_release(rowQueue);
-    }
-    return rowsForAllSections;
-    
-}
 
-
-- (NSArray *)sections {
-    
-    if (sections == nil) {
-        
-            //dispatch_queue_t sectionsQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.sectionsQueue", NULL);
-            //dispatch_async(sectionsQueue, ^{
-            
-            NSMutableArray *temp = [[[NSMutableArray alloc] init] autorelease];
-            
-            for (NSDictionary *dict in self.tableData) {
-                if ([[dict objectForKey:@"Type"] isEqual:@"PSGroupSpecifier"]) {
-                    [temp addObject:dict];
-                    NSLog(@"dict found");
-                }
-            }
-            
-            self.sections = temp;
-            //});
-            //dispatch_release(sectionsQueue);
-        
-    }
-       
-    
-    return sections;
-}
-
+ 
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
@@ -191,6 +212,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    
+    
     static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -206,12 +229,12 @@
     if ([[row objectForKey:@"Type"] isEqual:@"PSMultiValueSpecifier"]) {
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        cell.detailTextLabel.text = NSLocalizedString([GPSDataFormatter textValueFromDictionary:row],nil);
         
-    } else if ([[row objectForKey:@"Type"] isEqual:@"PSSliderSpecifier"]) {
+            //sets default value
+            //cell.detailTextLabel.text = NSLocalizedString([GPSDataFormatter textValueFromDictionary:row],nil);
+        cell.detailTextLabel.text = [[self.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
         
-        cell.accessoryView = [GPSDataFormatter sliderFromDictionary:row];
-    }
+    } 
     
     return cell;
     
@@ -225,29 +248,18 @@
     
     NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
     
-    dispatch_queue_t defaultsQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.defaultsQueue", NULL);
-    dispatch_async(defaultsQueue, ^{
-        
-        [[NSUserDefaults standardUserDefaults] setObject:row forKey:@"data"];
-    });
-    dispatch_release(defaultsQueue);
-     
+             
     if ([[row objectForKey:@"Type"] isEqual:[NSString stringWithString:@"PSMultiValueSpecifier"]]) {
         NSLog(@"TRUE");
         SettingsDetailViewController *dvc = [[SettingsDetailViewController alloc] 
                                              initWithNibName:@"SettingsViewController"
                                              bundle:nil];
+        dvc.data = row;
         
         [dvc setTitle:NSLocalizedString([row objectForKey:@"Title"],nil)];
         [self.navigationController pushViewController:dvc animated:YES];
         [dvc release];
     }
-    
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
-}
-
-
-- (void)deselect {
     
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
 }
@@ -267,10 +279,16 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    self.defaultValues = nil;
+    self.sections = nil;
+    self.rowsForAllSections = nil;
+    self.tableData = nil;
+    self.tableView = nil;
 }
 
 
 - (void)dealloc {
+    [defaultValues release];
     [sections release];
     [rowsForAllSections release];
     [tableData release];

@@ -7,6 +7,7 @@
 //
 
 #import "SettingsDetailViewController.h"
+#import "SettingsViewController.h"
 
 
 @implementation SettingsDetailViewController
@@ -19,7 +20,7 @@
 #pragma mark -
 #pragma mark Initialization
 
-
+/*
 - (NSDictionary *)data {
     
     if (!data) {
@@ -27,12 +28,16 @@
     }    
     return data;
 }
+*/
 
 
 - (NSString *)keyForData {
     
-    self.keyForData = [[[NSString alloc] initWithString:[self.data objectForKey:@"Key"]] autorelease];
-    NSLog(@"keyForData: %@",keyForData);
+    if (!keyForData) {
+        self.keyForData = [NSString stringWithString:[self.data objectForKey:@"Key"]];
+        NSLog(@"keyForData: %@",keyForData);
+    }
+    
     return keyForData;
 }
 
@@ -58,11 +63,16 @@
     [self.tableView reloadData];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)saveToDefaults {
     
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedRow forKey:self.keyForData];
     [[NSNotificationCenter defaultCenter] postNotificationName:self.keyForData object:nil];
 
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    
+    [self saveToDefaults];
 }
 
 #pragma mark -
