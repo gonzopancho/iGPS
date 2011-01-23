@@ -14,28 +14,14 @@
 
 @interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
     
-    
-        // !!!!! ZOMBIES SU ZAPNUTE !!!!!
-        //dorobit nastavenia h a v accuracy
-        //inicializacia selektorov h a v accuracy
-        //upravit nacitavanie dat do tabulky
-        //spravit selectory privatne!
 }
-
+@property (nonatomic, retain) UINavigationController *nc;
 @property (nonatomic, retain) LocationProvider *locationProvider;
-@property (nonatomic, retain) NSMutableArray *values;
-@property (nonatomic, retain) NSArray *names;
-
+@property (retain) NSMutableArray *values;
+@property (retain) NSArray *names;
 
 
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
-/*
-- (void)setupSpeedUnitsSelectorByDefaults;
-- (void)setupAltitudeUnitsSelelectorByDefaults;
-- (void)setupHeadingSelectorByDefaults;
-- (void)setupCourseSelectorByDefaults;
-*/
-
 - (IBAction)showSettings:(id)sender;
 
 @end

@@ -94,7 +94,7 @@
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
       
-    
+
     [self.window addSubview:navigationController.view];
     [self.window makeKeyAndVisible];
     
@@ -106,8 +106,11 @@
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
     
-   
+
     
+}
+
+- (void)applicationWillResignActive:(UIApplication *)application {
 }
 
 

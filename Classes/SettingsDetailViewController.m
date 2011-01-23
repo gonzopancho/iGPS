@@ -63,7 +63,7 @@
     [self.tableView reloadData];
 }
 
-- (void)saveToDefaults {
+- (void)sendNotification {
     
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedRow forKey:self.keyForData];
     [[NSNotificationCenter defaultCenter] postNotificationName:self.keyForData object:self.selectedRow];
@@ -72,7 +72,7 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     NSLog(@"%@",[[self.parentViewController class] description]);
-    [self saveToDefaults];
+    [self sendNotification];
 }
 
 #pragma mark -

@@ -9,6 +9,7 @@
 #import "SettingsViewController.h"
 #import "SettingsDetailViewController.h"
 #import "Constants.h"
+#import <dispatch/dispatch.h>
 
 
 
@@ -76,12 +77,12 @@
 - (void)setupSections {
     
     
-    NSMutableArray *temp = [[[NSMutableArray alloc] init] autorelease];
+    NSMutableArray *temp = [NSMutableArray array];
     
     for (NSDictionary *dict in self.tableData) {
-        if ([[dict objectForKey:@"Type"] isEqual:@"PSGroupSpecifier"]) {
+        if (![dict objectForKey:@"Key"]) {
             [temp addObject:dict];
-            NSLog(@"dict found");
+                //NSLog(@"dict found");
         }
     }
     
@@ -124,7 +125,7 @@
 
 - (IBAction)done:(id)sender {
 	NSLog(@"done:");
-    [self.delegate settingsViewControllerDidFinish:self];	
+    [self.delegate settingsViewControllerDidFinish];	
 }
 
 
@@ -134,6 +135,7 @@
         //[self setUpDefaultValues];
         //});
         // [NSThread detachNewThreadSelector:@selector(setUpDefaultValues) toTarget:self withObject:nil];
+    [self performSelector:@selector(setupData)];
     
     [super viewDidLoad];
     
@@ -162,17 +164,31 @@
 
     //   !!!!!PLAYGROUND!!!! 
 
-    
 - (void)setupData {
     
-    [self setupTableData];
-    [self setupSections];
-    [self setupRowsForAllSections];
-    [self setUpDefaultValues];
-    /*[self.tableView performSelectorOnMainThread:@selector(reloadData)
-                                     withObject:nil
-                                  waitUntilDone:YES];
-    */
+    dispatch_queue_t setupQueue = dispatch_queue_create("iGPS.SettingsViewController.setupQueue", NULL);
+    dispatch_async(setupQueue, ^{
+        [self setupTableData];
+        [self setupSections];
+        [self setupRowsForAllSections];
+    });
+    dispatch_release(setupQueue);
+        
+    
+}
+    
+- (void)refreshTable {
+    
+    dispatch_queue_t refreshQueue = dispatch_queue_create("iGPS.SettingsViewController.refreshQueue", NULL);
+    dispatch_async(refreshQueue, ^{
+        
+        [self setUpDefaultValues];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    });
+    dispatch_release(refreshQueue);
+    
 }
 
 - (NSDictionary *)rowForIndexPath:(NSIndexPath *)indexPath {
@@ -181,30 +197,19 @@
     
 }
 
-/*
-- (void)performSetupOnBackgroundThread {
-    
-    NSOperationQueue *myQueue = [[[NSOperationQueue alloc] init] autorelease];
-    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self 
-                                                                            selector:@selector(setupAndLoadTable)
-                                                                              object:nil];
-    [myQueue addOperation:operation];
-    [operation release];
-    
-}
-*/
 
     // !!!!!PLAYGROUND!!!! END!!!!
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    [self setupData];
-    [self.tableView reloadData];
+        // [self setupData];
+        //[self.tableView reloadData];
     
-    
-    [super viewWillAppear:animated];
+    [self refreshTable];
     NSLog(@"viewWillAppear");
     [self.navigationController setToolbarHidden:NO animated:YES];
+    [super viewWillAppear:animated];
+    
         
 }
 
@@ -223,28 +228,25 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)table {
 
     return [self.sections count]; 
-        //[[[DataHandler sharedDataHandler] groups] count];
+    
 }
 
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
     
     return [[self.rowsForAllSections objectAtIndex:section] count];
-        // [[[[DataHandler sharedDataHandler] keyElements] objectAtIndex:section] count];
+       
 }
 
 
 - (NSString *)tableView:(UITableView *)table titleForHeaderInSection:(NSInteger)section {
     
     return NSLocalizedString([[self.sections objectAtIndex:section] objectForKey:@"Title"],nil);
-//NSLocalizedString([[[[DataHandler sharedDataHandler] groups] objectAtIndex:section]objectForKey:@"Title"],nil);
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    
-    
+
     static NSString *CellIdentifier = @"Cell";
     
     UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
@@ -253,20 +255,18 @@
     }
     
     
-        //  NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-        //NSDictionary *row = [[[[DataHandler sharedDataHandler] keyElements] objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     NSDictionary *row = [self rowForIndexPath:indexPath];
-    cell.textLabel.text = NSLocalizedString([row objectForKey:@"Title"],nil);
-        // cell.textLabel.text = @"Toto je test!";
-    if ([[row objectForKey:@"Type"] isEqual:@"PSMultiValueSpecifier"]) {
+    NSString *textLabel = NSLocalizedString([row objectForKey:@"Title"],nil);
+    NSString *detailLabel = [[self.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    
+    
+    cell.textLabel.text = textLabel;
+
+    if ([[row objectForKey:@"Type"] isEqualToString:@"PSMultiValueSpecifier"]) {
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
-            //sets default value
-            //cell.detailTextLabel.text = NSLocalizedString([GPSDataFormatter textValueFromDictionary:row],nil);
-        cell.detailTextLabel.text = [[self.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-            //cell.detailTextLabel.text = [[[[DataHandler sharedDataHandler] selectedKeys] objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-            // cell.detailTextLabel.text = @"blabla";
+        cell.detailTextLabel.text = detailLabel;
+            
     } 
     
     return cell;
@@ -317,7 +317,6 @@
     self.sections = nil;
     self.rowsForAllSections = nil;
     self.tableData = nil;
-    self.tableView = nil;
 
 }
 
@@ -330,7 +329,6 @@
     [tableData release];
     [super dealloc];
 }
-
 
 @end
 

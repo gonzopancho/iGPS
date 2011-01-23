@@ -17,11 +17,12 @@
 @synthesize userDefaultsValues;
 @synthesize currentHeading;
 @synthesize delegate;
-@synthesize isSpeedValid, isHeadingValid;
+@synthesize isHeadingValid;
 
 
 #pragma mark -
 #pragma mark Initialization
+
 
 - (void)setupUserDefaultsValues {
     
@@ -94,7 +95,7 @@
 - (id)init {
     
     if ((self = [super init])) {
-        
+        NSLog(@"LocationProvider INIT");
         [self setupUserDefaultsValues];
         [self setupKeyValueObserverving];
         [self setupLocationManager];
@@ -114,12 +115,10 @@
     [self setDistanceFilter:[self.userDefaultsValues objectForKey:kDistanceKey]];
 }
 
-- (BOOL)isSpeedValid {
+
+- (BOOL)isDoubleValid:(double)value {
     
-    if (self.locationManager.location.speed < 0) isSpeedValid = NO;
-    else isSpeedValid = YES;
-    
-    return isSpeedValid;
+    return (value >= 0);
 }
 
 
@@ -132,12 +131,13 @@
     NSMutableDictionary * newDefaults = [NSMutableDictionary dictionary];
     
     if (self.userDefaultsValues) {
-        newDefaults = [self.userDefaultsValues mutableCopyWithZone:nil];
+        newDefaults = [self.userDefaultsValues mutableCopy];
     } 
     
     [newDefaults setObject:[aNotification object] forKey:[aNotification name]];
 
     self.userDefaultsValues = newDefaults;
+    [newDefaults release];
     
     NSLog(@"userDefaultsValues: %@",[self.userDefaultsValues description]);
     
@@ -297,11 +297,15 @@
 }
 
 - (NSString *)altitudeInFeet {
-    return [NSString stringWithFormat:@"%.3f ft",self.locationManager.location.altitude * 3.28083];    
+    return [NSString stringWithFormat:@"%.3f %@",
+            self.locationManager.location.altitude * 3.28083, 
+            NSLocalizedString(@"ft",nil)];    
 }
 
 - (NSString *)altitudeInMiles {
-    return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.altitude * 0.000621371192]; 
+    return [NSString stringWithFormat:@"%.4f %@",
+            self.locationManager.location.altitude * 0.000621371192,
+            NSLocalizedString(@"miles",nil)]; 
 }
 
 - (NSString *)altitudeByUserDefaults {
@@ -332,32 +336,32 @@
 
 - (NSString *)speedInMetresPerSecond {
    
-    if (!self.isSpeedValid) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    else return [NSString stringWithFormat:@"%.2f m/s",self.locationManager.location.speed];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    return [NSString stringWithFormat:@"%.2f m/s",self.locationManager.location.speed];
 }
 
 - (NSString *)speedInKilometersPerHour {
     
-    if (!self.isSpeedValid) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    else return [NSString stringWithFormat:@"%.2f km/h",self.locationManager.location.speed * 3.6];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    return [NSString stringWithFormat:@"%.2f km/h",self.locationManager.location.speed * 3.6];
 }
 
 - (NSString *)speedInMilesPerHour {
     
-    if (!self.isSpeedValid) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    else return [NSString stringWithFormat:@"%.2f mph",self.locationManager.location.speed * 2.24];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    return [NSString stringWithFormat:@"%.2f mph",self.locationManager.location.speed * 2.24];
 }
 
 - (NSString *)speedInKnots {
     
-    if (!self.isSpeedValid) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    else return [NSString stringWithFormat:@"%.2f knots",self.locationManager.location.speed * 1.94];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    return [NSString stringWithFormat:@"%.2f %@",self.locationManager.location.speed * 1.94,NSLocalizedString(@"knots",nil)];
 }
 
 - (NSString *)speedInFeetPerSecond {
     
-    if (!self.isSpeedValid) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    else return [NSString stringWithFormat:@"%.2f ft/s",self.locationManager.location.speed * 3.28];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    return [NSString stringWithFormat:@"%.2f ft/s",self.locationManager.location.speed * 3.28];
 }
 
 - (NSString *)speedByUserDefaults {
@@ -478,15 +482,9 @@
 
     //Course
 
-- (BOOL)isCourseValid:(double)course {
-    
-    if (course == -1) return NO;
-    else return YES;
-}
-
 - (NSString *)courseInDegrees {
     
-    if ([self isCourseValid:self.locationManager.location.course]) {
+    if ([self isDoubleValid:self.locationManager.location.course]) {
         return [NSString stringWithFormat:@"%.1f˚",self.locationManager.location.course];
     } else return [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
     
@@ -497,7 +495,7 @@
     double courseDegrees = self.locationManager.location.course;
     NSString *stringToReturn;
     
-    if ([self isCourseValid:courseDegrees]) {
+    if ([self isDoubleValid:courseDegrees]) {
         
         stringToReturn = [self stringFromDegrees:courseDegrees];
     } else stringToReturn = [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
@@ -517,33 +515,47 @@
 
     //vertical accuracy
 
-- (BOOL)isAccuracyValid:(double)accuracy {
-    
-    if (accuracy > 0) return YES;
-    return NO;
-}
-
 - (NSString *)verticalAccuracyInMeters {
- 
+    
+    if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
     return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.verticalAccuracy];
 }
 
 
 - (NSString *)verticalAccuracyInKilometres {
 
+    if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
     return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.verticalAccuracy * 0.001];
 }
 
 
 - (NSString *)verticalAccuracyInFeet {
     
-    return [NSString stringWithFormat:@"%.2f ft",self.locationManager.location.verticalAccuracy * 3.28083];
+    if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
+    return [NSString stringWithFormat:@"%.2f %@",
+            self.locationManager.location.verticalAccuracy * 3.28083,
+            NSLocalizedString(@"ft",nil)];
 }
 
 
 - (NSString *)verticalAccuracyInMiles {
     
-    return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.verticalAccuracy * 0.000621371192];
+    if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
+    return [NSString stringWithFormat:@"%.4f %@",
+            self.locationManager.location.verticalAccuracy * 0.000621371192,
+            NSLocalizedString(@"miles",nil)];
 }
 
 - (NSString *)veritcalAccuracyByUserDefaults {
@@ -572,22 +584,42 @@
 
 - (NSString *)horizontalAccuracyInMeters {
     
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
     return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.horizontalAccuracy];
 }
 
 - (NSString *)horizontalAccuracyInKilometres {
-    
+
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
     return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.horizontalAccuracy * 0.001];
 }
 
 - (NSString *)horizontalAccuracyInFeet {
     
-    return [NSString stringWithFormat:@"%.2f ft",self.locationManager.location.horizontalAccuracy * 3.28083];
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
+    return [NSString stringWithFormat:@"%.2f %@",
+            self.locationManager.location.horizontalAccuracy * 3.28083,
+            NSLocalizedString(@"ft",nil)];
 }
 
 - (NSString *)horizontalAccuracyInMiles {
     
-    return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.horizontalAccuracy * 0.000621371192];
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        
+        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    }
+    return [NSString stringWithFormat:@"%.4f %@",
+            self.locationManager.location.horizontalAccuracy * 0.000621371192,
+            NSLocalizedString(@"miles",nil)];
 }
 
 - (NSString *)horizontalAccuracyByUserDefaults {

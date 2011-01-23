@@ -9,76 +9,17 @@
 #import "RootViewController.h"
 #import "Constants.h"
 #import <dispatch/dispatch.h>
-/*
-@interface RootViewController ()
-
-@property (nonatomic, assign) SEL latitudeSelector;
-@property (nonatomic, assign) SEL longitudeSelector;
-@property (nonatomic, assign) SEL altitudeUnitsSelelector;
-@property (nonatomic, assign) SEL speedUnitsSelector;
-@property (nonatomic, assign) SEL headingSelector;
-@property (nonatomic, assign) SEL courseSelector;
-@property (nonatomic, assign) SEL hAccuracySelector;
-@property (nonatomic, assign) SEL vAccuracySelector;
-
-- (void)setupAccuracySelectors;
-- (void)setupCoordinatesSelector;
-
-@end
-*/
 
 @implementation RootViewController
 
-    //@synthesize latitudeSelector;
-    //@synthesize longitudeSelector;
+@synthesize nc;
 @synthesize locationProvider;
 @synthesize names;
 @synthesize values;
-    //@synthesize speedUnitsSelector;
-    //@synthesize altitudeUnitsSelelector; 
-    //@synthesize headingSelector;
-    //@synthesize courseSelector;
-    //@synthesize hAccuracySelector;
-    //@synthesize vAccuracySelector;
-
 
 #pragma mark -
 #pragma mark View lifecycle
 
-/*
-- (void)setupKeyValueObserving {
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupHeadingSelectorByDefaults)
-                                                 name:kNorthKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupCoordinatesSelector)
-                                                 name:kCoordsKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupAccuracySelectors)
-                                                 name:kAccUnitsKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupAltitudeUnitsSelelectorByDefaults)
-                                                 name:kAltitudeKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupSpeedUnitsSelectorByDefaults)
-                                                 name:kSpeedKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(setupCourseSelectorByDefaults)
-                                                 name:kCourseKey
-                                               object:nil];
-}
-*/
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -90,10 +31,20 @@
         
     }
     [self.locationProvider setDelegate:self];
-
-        //[self setupKeyValueObserving];
-        //[self performSelector:@selector(setupAllSelectors)];
     
+    SettingsViewController *svc = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
+    
+    [svc setDelegate:self];
+    [svc setTitle:NSLocalizedString(@"Settings",nil)]; 
+    
+    if (!self.nc) {
+        self.nc = [[UINavigationController alloc] init];
+    }
+    [self.nc setViewControllers:[NSArray arrayWithObject:svc]];
+    [svc release]; 
+    
+    
+
 }
 
 - (NSArray *)toolbarItems {
@@ -134,7 +85,7 @@
     } else lang = @"en";
     
     [languages replaceObjectAtIndex:0 withObject:lang];
-    [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"]; 
+    [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];
     
     
     [self viewWillAppear:NO];
@@ -146,193 +97,11 @@
     
 }
 
-- (void)settingsViewControllerDidFinish:(SettingsViewController *)controller {
+- (void)settingsViewControllerDidFinish {
         //[self.tableView reloadData];
     [self dismissModalViewControllerAnimated:YES];
 }
 
-/*
-- (int)defaultsValueForKey:(NSString *)aKey {
-    NSNumber *number = [[NSUserDefaults standardUserDefaults] objectForKey:aKey];
-    return [number intValue];
-}
-
-*/
-
-/*
-- (void)setupAllSelectors {
-
-    NSLog(@"setupAllSelectors");
-    [self setupCoordinatesSelector];
-    [self setupHeadingSelectorByDefaults];
-    [self setupAltitudeUnitsSelelectorByDefaults];
-    [self setupSpeedUnitsSelectorByDefaults];
-    [self setupCourseSelectorByDefaults];
-    [self setupAccuracySelectors];
-    
-}
-
-- (void)setupSpeedUnitsSelectorByDefaults {
-    
-
-        //NSNumber *speedUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kSpeedKey];
-        //NSLog(@"setupSpeedUnitsSelectorByDefaults %i",[speedUnits intValue]);
-    switch ([self defaultsValueForKey:kSpeedKey]) {
-        case 1:
-            self.speedUnitsSelector = @selector(speedInMetresPerSecond);
-            break;
-        case 2:
-            self.speedUnitsSelector = @selector(speedInMilesPerHour);
-            break;
-        case 3:
-            self.speedUnitsSelector = @selector(speedInKnots);
-            break;
-        case 4:
-            self.speedUnitsSelector = @selector(speedInFeetPerSecond);
-            break;
-        default:
-            self.speedUnitsSelector = @selector(speedInKilometersPerHour);
-            break;
-    }
-    
-}
-
-
-- (void)setupAltitudeUnitsSelelectorByDefaults {
-    
-    NSNumber *altitudeUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kAltitudeKey];
-    NSLog(@"setupAltitudeUnitsSelelectorByDefaults %i",[altitudeUnits intValue]);
-    switch ([altitudeUnits intValue]) {
-        case 1:
-            self.altitudeUnitsSelelector = @selector(altitudeInKilometres);
-            break;
-        case 2:
-            self.altitudeUnitsSelelector = @selector(altitudeInFeet);
-            break;
-        case 3:
-            self.altitudeUnitsSelelector = @selector(altitudeInMiles);
-            break;
-        default:
-            self.altitudeUnitsSelelector = @selector(altitudeInMetres);
-            break;
-    }
-}
-
-- (void)setupHeadingSelectorByDefaults {
-    
-    NSNumber *north = [[NSUserDefaults standardUserDefaults] objectForKey:kNorthKey];
-    NSLog(@"setupHeadingSelectorByDefaults %i",[north intValue]);
-    switch ([north intValue]) {
-        case 1:
-            self.headingSelector = @selector(magneticHeading);
-            break;
-        default:
-            self.headingSelector = @selector(trueHeading);
-            break;
-    }
-}
-
-- (void)setupCourseSelectorByDefaults {
-    
-    NSNumber *course = [[NSUserDefaults standardUserDefaults] objectForKey:kCourseKey];
-    NSLog(@"setupCourseSelectorByDefaults %i",[course intValue]);
-    switch ([course intValue]) {
-        case 1:
-            self.courseSelector = @selector(courseInDegrees);
-            break;
-        default:
-            self.courseSelector = @selector(courseMixed);
-            break;
-    }
-    
-    
-}
-
-
-
-- (void)setupHorizontalAccuracySelectorByValue:(int)aValue {
-    
-    switch (aValue) {
-        case 1:
-            self.hAccuracySelector = @selector(horizontalAccuracyInKilometres);
-            break;
-        case 2:
-            self.hAccuracySelector = @selector(horizontalAccuracyInFeet);
-            break;
-        case 3:
-            self.hAccuracySelector = @selector(horizontalAccuracyInMiles);
-            break;
-        default:
-            self.hAccuracySelector = @selector(horizontalAccuracyInMeters);
-            break;
-    }
-    
-    
-}
-
-- (void)setupVerticalAccuracySelectorByValue:(int)aValue {
-    
-    switch (aValue) {
-        case 1:
-            self.vAccuracySelector = @selector(verticalAccuracyInKilometres);
-            break;
-        case 2:
-            self.vAccuracySelector = @selector(verticalAccuracyInFeet);
-            break;
-        case 3:
-            self.vAccuracySelector = @selector(verticalAccuracyInMiles);
-            break;
-        default:
-            self.vAccuracySelector = @selector(verticalAccuracyInMeters);
-            break;
-    }
-    
-    
-}
-
-- (void)setupAccuracySelectors {
-    
-    int value = [self defaultsValueForKey:kAccUnitsKey];
-    [self setupHorizontalAccuracySelectorByValue:value];
-    [self setupVerticalAccuracySelectorByValue:value];
-}
-
-
-- (void)setupLatitudeSelectorByValue:(int)aValue {
-    
-    switch (aValue) {
-        case 1:
-            self.latitudeSelector = @selector(latitudeInDegDec);
-            break;
-        default:
-            self.latitudeSelector = @selector(latitudeInDMS);
-            break;
-    }
-    
-}
-
-
-- (void)setupLongitudeSelectorByValue:(int)aValue {
-    
-    switch (aValue) {
-        case 1:
-            self.longitudeSelector = @selector(longitudeInDegDec);
-            break;
-        default:
-            self.longitudeSelector = @selector(longitudeInDMS);
-            break;
-    }
-    
-}
-
-- (void)setupCoordinatesSelector {
-    
-    int value = [self defaultsValueForKey:kCoordsKey];
-    [self setupLatitudeSelectorByValue:value];
-    [self setupLongitudeSelectorByValue:value];
-    
-}
-*/
 - (void)locationProviderDidUpdateLocation {
     
     NSLog(@"locationProviderDidUpdateLocation");    
@@ -347,7 +116,7 @@
         [cell setMainTextLabel:label];
     });
     
-    NSLog(@"label: %@, index: %d",label,indexPath.row);
+        // NSLog(@"label: %@, index: %d",label,indexPath.row);
     [self setStringValue:label atIndex:indexPath];
 }
 
@@ -482,7 +251,7 @@
 
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
     
-    NSLog(@"Index Value: %i",index.row);
+        // NSLog(@"Index Value: %i",index.row);
     if ([self.values count] > index.row) {
         [self.values replaceObjectAtIndex:index.row withObject:value];
     }
@@ -536,8 +305,21 @@
 
 - (void)loadData {
     
-    [self setupValues];
-    [self setupNames];
+    dispatch_queue_t load = dispatch_queue_create("iGPS.RootViewController.loadQueue", NULL);
+    dispatch_async(load, ^{
+        
+        [self setupValues];
+        [self setupNames];
+        
+            //mutex
+        @synchronized(self){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData]; //kriticka sekcia
+            });
+        }
+    });
+    dispatch_release(load);
+    
 }
 
 
@@ -545,41 +327,25 @@
 - (IBAction)showSettings:(id)sender {
     
     
-    SettingsViewController *svc = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-
-    [svc setDelegate:self];
-    [svc setTitle:NSLocalizedString(@"Settings",nil)]; 
-    
-    
         
-    UINavigationController *nc = [[UINavigationController alloc] initWithRootViewController:svc];
-    [svc release]; 
-    
-    [nc setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [self presentModalViewController:nc animated:YES];
+    [self.nc setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
+    [self presentModalViewController:self.nc animated:YES];
         //[self.navigationController pushViewController:svc animated:YES];
-        //[svc release];
-    [nc release];
-    
-    
-	  
+        //[svc release];  
     
 }
 
 - (void)doSetup {
 
     [self loadData];
-    [self.tableView reloadData];  
     
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSLog(@"RVC viewWillAppear:" );
+        //NSLog(@"RVC viewWillAppear:" );
     [super viewWillAppear:animated];
     [self.locationProvider startUpdatingLocationAndHeading];
     
-        //[NSThread detachNewThreadSelector:@selector(setupAllSelectors) toTarget:self withObject:nil];    
-        //[NSThread detachNewThreadSelector:@selector(loadData) toTarget:self withObject:nil];    
     [self doSetup];
 }
 
@@ -591,14 +357,13 @@
 
 
 - (void)viewWillDisappear:(BOOL)animated {
-	[super viewWillDisappear:animated];
     [self.locationProvider stopUpdatingLocationAndHeading];
+    [super viewWillDisappear:animated];
 }
 
 
 - (void)viewDidDisappear:(BOOL)animated {
-    NSLog(@"viewDidDisappear");
-    
+        //NSLog(@"viewDidDisappear");
 	[super viewDidDisappear:animated];
 }
 
@@ -668,11 +433,11 @@
 - (void)viewDidUnload {  
     self.names = nil;
     self.values = nil;
-    self.locationProvider = nil;
 }
 
 
 - (void)dealloc {
+    [nc release];
     [names release];
     [values release];
     [locationProvider release];

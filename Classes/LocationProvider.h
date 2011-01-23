@@ -33,7 +33,6 @@
 @property (retain) NSDictionary *userDefaultsValues;
 @property (nonatomic, retain) id <LocationProviderDelegate> delegate;
 
-@property (nonatomic, assign) BOOL isSpeedValid;
 @property (nonatomic, assign) BOOL isHeadingValid;
 
 

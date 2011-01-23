@@ -17,10 +17,10 @@
 }
 
 @property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;
-@property (nonatomic, retain) NSArray *tableData;
-@property (nonatomic, retain) NSArray *rowsForAllSections;
-@property (nonatomic, retain) NSArray *sections;
-@property (nonatomic, retain) NSArray *defaultValues;
+@property (retain) NSArray *tableData;
+@property (retain) NSArray *rowsForAllSections;
+@property (retain) NSArray *sections;
+@property (retain) NSArray *defaultValues;
 
 
 - (IBAction)done:(id)sender;
@@ -38,5 +38,5 @@
 
 @protocol SettingsViewControllerDelegate <NSObject>
 @required
-- (void)settingsViewControllerDidFinish:(SettingsViewController *)controller;
+- (void)settingsViewControllerDidFinish;
 @end
