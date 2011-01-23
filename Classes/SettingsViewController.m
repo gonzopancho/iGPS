@@ -8,7 +8,6 @@
 
 #import "SettingsViewController.h"
 #import "SettingsDetailViewController.h"
-#import "GPSDataFormatter.h"
 #import "Constants.h"
 
 
@@ -25,9 +24,10 @@
 #pragma mark View lifecycle
 
 
-
 - (void)setupTableData {
-        
+    
+        //self.tableData = [[DataHandler sharedDataHandler] rootPlist];
+    
     NSString *pathStr = [[NSBundle mainBundle] bundlePath];
     NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
     NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
@@ -35,8 +35,9 @@
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
     
     self.tableData = [NSArray arrayWithArray:[dict objectForKey:@"PreferenceSpecifiers"]];
+        //self.tableData = (NSArray *)[dict objectForKey:@"PreferenceSpecifiers"];
+        //NSLog(@"tabledata: %@",[self.tableData description]);
     
-    NSLog(@"tabledata: %@",[self.tableData description]);
 }
 
 
@@ -67,10 +68,13 @@
     self.rowsForAllSections = mainArray;
     
     
+        //self.rowsForAllSections = [[DataHandler sharedDataHandler] keyElements];
+    
 }
 
 
 - (void)setupSections {
+    
     
     NSMutableArray *temp = [[[NSMutableArray alloc] init] autorelease];
     
@@ -83,12 +87,13 @@
     
     self.sections = temp;
     
+        // self.sections = [[DataHandler sharedDataHandler] groups];
 }
 
 
 - (void)setUpDefaultValues {
     
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+        //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     
     NSMutableArray *temp = [NSMutableArray array];
     NSMutableArray *storage = [NSMutableArray array];
@@ -110,7 +115,10 @@
     
     self.defaultValues = storage;
     
-    [pool drain];
+        //    [pool drain];
+     
+     
+        //self.defaultValues = [[DataHandler sharedDataHandler] selectedKeys];
 }
 
 
@@ -121,7 +129,12 @@
 
 
 - (void)viewDidLoad {
-    [NSThread detachNewThreadSelector:@selector(setUpDefaultValues) toTarget:self withObject:nil];
+        //dispatch_async(processQueue, ^{
+        
+        //[self setUpDefaultValues];
+        //});
+        // [NSThread detachNewThreadSelector:@selector(setUpDefaultValues) toTarget:self withObject:nil];
+    
     [super viewDidLoad];
     
 }
@@ -150,26 +163,26 @@
     //   !!!!!PLAYGROUND!!!! 
 
     
-- (void)setupAndLoadTable {
+- (void)setupData {
     
     [self setupTableData];
     [self setupSections];
     [self setupRowsForAllSections];
     [self setUpDefaultValues];
-    [self.tableView performSelectorOnMainThread:@selector(reloadData)
+    /*[self.tableView performSelectorOnMainThread:@selector(reloadData)
                                      withObject:nil
                                   waitUntilDone:YES];
+    */
+}
+
+- (NSDictionary *)rowForIndexPath:(NSIndexPath *)indexPath {
+    
+    return [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
 }
 
-
-    // !!!!!PLAYGROUND!!!! END!!!!
-
-- (void)viewWillAppear:(BOOL)animated {
-    
-    [super viewWillAppear:animated];
-    NSLog(@"viewWillAppear");
-    [self.navigationController setToolbarHidden:NO animated:YES];
+/*
+- (void)performSetupOnBackgroundThread {
     
     NSOperationQueue *myQueue = [[[NSOperationQueue alloc] init] autorelease];
     NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self 
@@ -177,7 +190,22 @@
                                                                               object:nil];
     [myQueue addOperation:operation];
     [operation release];
-   
+    
+}
+*/
+
+    // !!!!!PLAYGROUND!!!! END!!!!
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+    [self setupData];
+    [self.tableView reloadData];
+    
+    
+    [super viewWillAppear:animated];
+    NSLog(@"viewWillAppear");
+    [self.navigationController setToolbarHidden:NO animated:YES];
+        
 }
 
 
@@ -192,40 +220,44 @@
 
  
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)table {
 
-    return [self.sections count];
+    return [self.sections count]; 
+        //[[[DataHandler sharedDataHandler] groups] count];
 }
 
 
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+- (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
     
     return [[self.rowsForAllSections objectAtIndex:section] count];
+        // [[[[DataHandler sharedDataHandler] keyElements] objectAtIndex:section] count];
 }
 
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+- (NSString *)tableView:(UITableView *)table titleForHeaderInSection:(NSInteger)section {
     
     return NSLocalizedString([[self.sections objectAtIndex:section] objectForKey:@"Title"],nil);
+//NSLocalizedString([[[[DataHandler sharedDataHandler] groups] objectAtIndex:section]objectForKey:@"Title"],nil);
 }
 
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+- (UITableViewCell *)tableView:(UITableView *)table cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     
     
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    UITableViewCell *cell = [table dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier] autorelease];
     }
     
     
-    NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-    
+        //  NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+        //NSDictionary *row = [[[[DataHandler sharedDataHandler] keyElements] objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    NSDictionary *row = [self rowForIndexPath:indexPath];
     cell.textLabel.text = NSLocalizedString([row objectForKey:@"Title"],nil);
-    
+        // cell.textLabel.text = @"Toto je test!";
     if ([[row objectForKey:@"Type"] isEqual:@"PSMultiValueSpecifier"]) {
         
         cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -233,7 +265,8 @@
             //sets default value
             //cell.detailTextLabel.text = NSLocalizedString([GPSDataFormatter textValueFromDictionary:row],nil);
         cell.detailTextLabel.text = [[self.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
-        
+            //cell.detailTextLabel.text = [[[[DataHandler sharedDataHandler] selectedKeys] objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+            // cell.detailTextLabel.text = @"blabla";
     } 
     
     return cell;
@@ -244,7 +277,7 @@
 #pragma mark -
 #pragma mark Table view delegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
     
@@ -279,15 +312,18 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+    
     self.defaultValues = nil;
     self.sections = nil;
     self.rowsForAllSections = nil;
     self.tableData = nil;
     self.tableView = nil;
+
 }
 
 
 - (void)dealloc {
+
     [defaultValues release];
     [sections release];
     [rowsForAllSections release];

@@ -16,6 +16,7 @@
 @synthesize navigationController;
 
 
+
 #pragma mark -
 #pragma mark Application lifecycle
 
@@ -34,7 +35,7 @@
         NSDictionary *settingsDict  = [NSDictionary dictionaryWithContentsOfFile:finalPath];
         NSArray *prefSpecifierArray = [settingsDict objectForKey:@"PreferenceSpecifiers"];
         
-        NSLog(@"%@",[prefSpecifierArray description]);
+            //NSLog(@"%@",[prefSpecifierArray description]);
         
         NSNumber *speedDefault    = [NSNumber numberWithInt:0];
         NSNumber *altitudeDefault = [NSNumber numberWithInt:0];
@@ -92,22 +93,29 @@
         [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
-    
+      
     
     [self.window addSubview:navigationController.view];
     [self.window makeKeyAndVisible];
     
     
+    
+    
     return YES;
 }
 
+- (void)applicationWillEnterForeground:(UIApplication *)application {
+    
+   
+    
+}
 
 
 #pragma mark -
 #pragma mark Memory management
 
 - (void)dealloc {
-	[navigationController release];
+    [navigationController release];
 	[window release];
 	[super dealloc];
 }

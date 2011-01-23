@@ -83,24 +83,11 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				3B8C54D412DAECF400793C6F /* LocalizationHandler.h */,
-				3B8C54D512DAECF400793C6F /* LocalizationHandler.m */,
-				3B21E10F12CBEC2E006D4C32 /* GPSDataFormatter.h */,
-				3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */,
-				3B21E10512CBEBE8006D4C32 /* LocationProvider.h */,
-				3B21E10612CBEBE8006D4C32 /* LocationProvider.m */,
-				28C286DF0D94DF7D0034E888 /* RootViewController.h */,
-				28C286E00D94DF7D0034E888 /* RootViewController.m */,
+				3BD7717312EA2E8100653243 /* Controllers */,
+				3BD7717212EA2E7300653243 /* Views */,
+				3BD7717112EA2E5300653243 /* Models */,
 				1D3623240D0F684500981E51 /* iGPSAppDelegate.h */,
 				1D3623250D0F684500981E51 /* iGPSAppDelegate.m */,
-				3BC7B67E12CD397F00852765 /* SettingsViewController.h */,
-				3BC7B67F12CD397F00852765 /* SettingsViewController.m */,
-				3B290D5412CE4F87002148B5 /* SettingsDetailViewController.h */,
-				3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */,
-				3B290FFF12CF5ED9002148B5 /* Constants.h */,
-				3B29100012CF5ED9002148B5 /* Constants.m */,
-				3B8C528612D8472400793C6F /* iGPSCustomTableViewCell.h */,
-				3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -157,6 +144,43 @@
 				2892E40F0DC94CBA00A64D0F /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3BD7717112EA2E5300653243 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3B290FFF12CF5ED9002148B5 /* Constants.h */,
+				3B29100012CF5ED9002148B5 /* Constants.m */,
+				3B8C54D412DAECF400793C6F /* LocalizationHandler.h */,
+				3B8C54D512DAECF400793C6F /* LocalizationHandler.m */,
+				3B21E10F12CBEC2E006D4C32 /* GPSDataFormatter.h */,
+				3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */,
+				3B21E10512CBEBE8006D4C32 /* LocationProvider.h */,
+				3B21E10612CBEBE8006D4C32 /* LocationProvider.m */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		3BD7717212EA2E7300653243 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3B8C528612D8472400793C6F /* iGPSCustomTableViewCell.h */,
+				3B8C528712D8472400793C6F /* iGPSCustomTableViewCell.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		3BD7717312EA2E8100653243 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				3BC7B67E12CD397F00852765 /* SettingsViewController.h */,
+				3BC7B67F12CD397F00852765 /* SettingsViewController.m */,
+				3B290D5412CE4F87002148B5 /* SettingsDetailViewController.h */,
+				3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */,
+				28C286DF0D94DF7D0034E888 /* RootViewController.h */,
+				28C286E00D94DF7D0034E888 /* RootViewController.m */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

@@ -30,6 +30,7 @@
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
 @property (nonatomic, retain) CLHeading *currentHeading;
+@property (retain) NSDictionary *userDefaultsValues;
 @property (nonatomic, retain) id <LocationProviderDelegate> delegate;
 
 @property (nonatomic, assign) BOOL isSpeedValid;
@@ -38,6 +39,7 @@
 
 
 - (id)init;
+- (void)setupLocationManager;
 
 - (void)startUpdatingLocationAndHeading;
 - (void)stopUpdatingLocationAndHeading;
@@ -46,44 +48,49 @@
 - (void)startUpdatingLocation;
 - (void)stopUpdatingLocation;
 
-- (void)setAccuracy:(int)newAccuracy;
-- (void)setDistanceFilter:(int)newFilter;
+- (void)setAccuracy:(id)newAccuracy;
+- (void)setDistanceFilter:(id)newFilter;
 
 - (NSString *)latitudeInDegDec;
 - (NSString *)latitudeInDMS;
+- (NSString *)latitudeByUserDefaults;
+
 - (NSString *)longitudeInDegDec;
 - (NSString *)longitudeInDMS;
+- (NSString *)longitudeByUserDefaults;
 
 - (NSString *)altitudeInMetres;
 - (NSString *)altitudeInKilometres;
 - (NSString *)altitudeInFeet;
 - (NSString *)altitudeInMiles;
+- (NSString *)altitudeByUserDefaults;
 
 - (NSString *)speedInKilometersPerHour;
 - (NSString *)speedInMetresPerSecond;
 - (NSString *)speedInMilesPerHour;
 - (NSString *)speedInKnots;
 - (NSString *)speedInFeetPerSecond;
+- (NSString *)speedByUserDefaults;
 
 - (NSString *)magneticHeading;
 - (NSString *)trueHeading;
+- (NSString *)headingByUserDefaults;
 
 - (NSString *)courseInDegrees;
 - (NSString *)courseMixed;
+- (NSString *)courseByUserDefaults;
 
 - (NSString *)verticalAccuracyInMeters;
 - (NSString *)verticalAccuracyInKilometres;
 - (NSString *)verticalAccuracyInFeet;
 - (NSString *)verticalAccuracyInMiles;
+- (NSString *)veritcalAccuracyByUserDefaults;
 
 - (NSString *)horizontalAccuracyInMeters;
 - (NSString *)horizontalAccuracyInKilometres;
 - (NSString *)horizontalAccuracyInFeet;
 - (NSString *)horizontalAccuracyInMiles;
-
-    //setAccuracy
-    //setDistanceFilter
-    //poriesit zobrazenie priznaku aktualizovania
+- (NSString *)horizontalAccuracyByUserDefaults;
 
 @end
 

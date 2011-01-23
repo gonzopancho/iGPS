@@ -7,7 +7,7 @@
 //
 
 #import "LocalizationHandler.h"
-#import <dispatch/dispatch.h>
+
 
 
 @implementation LocalizationHandler
@@ -52,13 +52,24 @@ static NSBundle *bundle = nil;
 }
 
 - (void)setBundle:(NSBundle *)newBundle {
-    
+    NSLog(@"!!!!!!!!!!SET BUNDLE !!!!!!!!");
     [newBundle retain];
     [bundle release];
     bundle = newBundle;
     
 }
-         
+
+/*
+- (void)setupBundleOnBackgroundThread {
+    
+    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
+    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self
+                                                                            selector:@selector(setupBundle) object:nil];
+    [queue addOperation:operation];
+    [operation release];
+    
+}
+*/
 
 - (void)setupBundle {
             

@@ -26,7 +26,8 @@
 - (IBAction)done:(id)sender;
 
     //setup Methods
-- (void)setupAndLoadTable;
+    //- (void)performSetupOnBackgroundThread;
+- (void)setupData;
 - (void)setupTableData;
 - (void)setUpDefaultValues;
 - (void)setupRowsForAllSections;

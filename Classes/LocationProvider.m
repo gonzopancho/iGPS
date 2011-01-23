@@ -14,18 +14,90 @@
 @implementation LocationProvider
 
 @synthesize locationManager;
+@synthesize userDefaultsValues;
 @synthesize currentHeading;
 @synthesize delegate;
-@synthesize isSpeedValid;
-@synthesize isHeadingValid;
+@synthesize isSpeedValid, isHeadingValid;
+
 
 #pragma mark -
 #pragma mark Initialization
 
+- (void)setupUserDefaultsValues {
+    
+    NSNumber *speed    = [[NSUserDefaults standardUserDefaults] objectForKey:kSpeedKey];
+    NSNumber *accuracy = [[NSUserDefaults standardUserDefaults] objectForKey:kAccuracyKey];
+    NSNumber *accUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kAccUnitsKey];
+    NSNumber *altitude = [[NSUserDefaults standardUserDefaults] objectForKey:kAltitudeKey];
+    NSNumber *north    = [[NSUserDefaults standardUserDefaults] objectForKey:kNorthKey];
+    NSNumber *distance = [[NSUserDefaults standardUserDefaults] objectForKey:kDistanceKey];
+    NSNumber *course   = [[NSUserDefaults standardUserDefaults] objectForKey:kCourseKey];
+    NSNumber *coords   = [[NSUserDefaults standardUserDefaults] objectForKey:kCoordsKey];
+    
+    self.userDefaultsValues = [NSDictionary dictionaryWithObjectsAndKeys:
+                               speed,kSpeedKey,
+                               accuracy,kAccuracyKey,
+                               accUnits,kAccUnitsKey,
+                               altitude,kAltitudeKey,
+                               north,kNorthKey,
+                               distance,kDistanceKey,
+                               course,kCourseKey,
+                               coords,kCoordsKey,nil];
+}
+
+- (void)setupKeyValueObserverving {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(accuracyChanged:)
+                                                 name:kAccuracyKey
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                             selector:@selector(distanceFilterChanged:) 
+                                                 name:kDistanceKey
+                                               object:nil];
+    
+        //notifications for methods change
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kNorthKey
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kCoordsKey
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kAccUnitsKey
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kAltitudeKey
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kSpeedKey
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateDefaults:)
+                                                 name:kCourseKey
+                                               object:nil];
+    
+    
+}
+
+
 - (id)init {
     
     if ((self = [super init])) {
-        [self performSelector:@selector(setupKeyValueObserverving)];
+        
+        [self setupUserDefaultsValues];
+        [self setupKeyValueObserverving];
+        [self setupLocationManager];
     }
     return self;
 }
@@ -38,8 +110,8 @@
     
     
     self.locationManager.delegate = self;
-    [self setAccuracy:1];
-    self.locationManager.distanceFilter = 10;
+    [self setAccuracy:[self.userDefaultsValues objectForKey:kAccuracyKey]];
+    [self setDistanceFilter:[self.userDefaultsValues objectForKey:kDistanceKey]];
 }
 
 - (BOOL)isSpeedValid {
@@ -54,38 +126,41 @@
 #pragma mark -
 #pragma mark LocationProvider life cycle
 
-- (void)setupKeyValueObserverving {
+
+- (void)updateDefaults:(NSNotification *)aNotification {
     
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(accuracyChanged:)
-                                                 name:kAccuracyKey
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(distanceFilterChanged:) 
-                                                 name:kDistanceKey
-                                               object:nil];
+    NSMutableDictionary * newDefaults = [NSMutableDictionary dictionary];
+    
+    if (self.userDefaultsValues) {
+        newDefaults = [self.userDefaultsValues mutableCopyWithZone:nil];
+    } 
+    
+    [newDefaults setObject:[aNotification object] forKey:[aNotification name]];
+
+    self.userDefaultsValues = newDefaults;
+    
+    NSLog(@"userDefaultsValues: %@",[self.userDefaultsValues description]);
+    
 }
 
 - (void)accuracyChanged:(NSNotification *)aNotification {
     
-    NSNumber *accuracyValue = [[NSUserDefaults standardUserDefaults] objectForKey:kAccuracyKey];
-    [self setAccuracy:[accuracyValue intValue]];
+    [self setAccuracy:[aNotification object]];
 }
 
 - (void)distanceFilterChanged:(NSNotification *)aNotification {
     
-    NSNumber *newDistanceFilterValue = [[NSUserDefaults standardUserDefaults] objectForKey:kDistanceKey];
-    [self setDistanceFilter:[newDistanceFilterValue intValue]];
+    [self setDistanceFilter:[aNotification object]];
     
 }
 
 
-- (void)setAccuracy:(int)newAccuracy {
+- (void)setAccuracy:(id)newAccuracy {
     
-
-    if (newAccuracy != self.locationManager.desiredAccuracy) {
-        
-        switch (newAccuracy) {
+    if ([newAccuracy isKindOfClass:[NSNumber class]]) {
+        NSNumber *accuracy = newAccuracy;        
+            
+        switch ([accuracy intValue]) {
             case 1:
                 self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
                 break;
@@ -106,16 +181,24 @@
                 break;
         }
         
-    }
         
+    }
+    
+            
 }
 
 
-- (void)setDistanceFilter:(int)newFilter {
+- (void)setDistanceFilter:(id)newFilter {
     
-    if (newFilter != self.locationManager.distanceFilter) {
-        self.locationManager.distanceFilter = newFilter;
+    if ([newFilter isKindOfClass:[NSNumber class]]) {
+        NSNumber *distanceFilter = newFilter;
+        
+        if ([distanceFilter doubleValue] != self.locationManager.distanceFilter) {
+            self.locationManager.distanceFilter = [distanceFilter doubleValue];
+        }
     }
+    
+    
     
 }
 
@@ -138,7 +221,7 @@
             [self setupLocationManager];
         }
         [self.locationManager startUpdatingHeading];
-    }
+    } 
 
 }
 - (void)stopUpdatingHeading {
@@ -163,7 +246,7 @@
 }
 
 
-    //Latitude and Longitude
+    //Latitude
 
 - (NSString *)latitudeInDegDec {
     return [NSString stringWithFormat:@"%f",self.locationManager.location.coordinate.latitude];
@@ -173,12 +256,33 @@
     return [NSString stringWithFormat:@"%@",[GPSDataFormatter latitudeInDMS:self.locationManager.location.coordinate.latitude]];   
 }
 
+- (NSString *)latitudeByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kCoordsKey];
+    
+    if ([defaultsValue intValue] == 0) return [self latitudeInDegDec];
+    
+    return [self latitudeInDMS];
+}
+
+
+    //Longitude
+
 - (NSString *)longitudeInDegDec {
     return [NSString stringWithFormat:@"%f",self.locationManager.location.coordinate.longitude];
 }
 
 - (NSString *)longitudeInDMS {
     return [NSString stringWithFormat:@"%@",[GPSDataFormatter longitudeInDMS:self.locationManager.location.coordinate.longitude]];
+}
+
+- (NSString *)longitudeByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kCoordsKey];
+    
+    if ([defaultsValue intValue] == 0) return [self longitudeInDegDec];
+    
+    return [self longitudeInDMS];
 }
 
 
@@ -198,6 +302,28 @@
 
 - (NSString *)altitudeInMiles {
     return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.altitude * 0.000621371192]; 
+}
+
+- (NSString *)altitudeByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kAltitudeKey];
+    
+    switch ([defaultsValue intValue]) {
+        case 1:
+            return [self altitudeInKilometres];
+            break;
+        case 2:
+            return [self altitudeInFeet];
+            break;
+        case 3:
+            return [self altitudeInMiles];
+            break;
+        default:
+            return [self altitudeInMetres];
+            break;
+    }
+
+    
 }
 
 
@@ -234,6 +360,29 @@
     else return [NSString stringWithFormat:@"%.2f ft/s",self.locationManager.location.speed * 3.28];
 }
 
+- (NSString *)speedByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kSpeedKey];
+    
+    switch ([defaultsValue intValue]) {
+        case 1:
+            return [self speedInMetresPerSecond];
+            break;
+        case 2:
+            return [self speedInMilesPerHour];
+            break;
+        case 3:
+            return [self speedInKnots];
+            break;
+        case 4:
+            return [self speedInFeetPerSecond];
+            break;
+        default:
+            return [self speedInKilometersPerHour];
+            break;
+    }
+    
+}
 
     //Heading
 
@@ -316,6 +465,16 @@
     return [self stringFromDegrees:self.locationManager.heading.magneticHeading];  
 }
 
+- (NSString *)headingByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kNorthKey];
+    
+    if ([defaultsValue intValue] == 0) return [self trueHeading];
+    
+    return [self magneticHeading];
+    
+}
+
 
     //Course
 
@@ -333,7 +492,6 @@
     
 }
 
-
 - (NSString *)courseMixed {
     
     double courseDegrees = self.locationManager.location.course;
@@ -345,6 +503,16 @@
     } else stringToReturn = [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
     
     return stringToReturn;
+}
+
+- (NSString *)courseByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kCourseKey];
+    
+    if ([defaultsValue intValue] == 0) return [self courseInDegrees];
+    
+    return [self courseMixed];
+    
 }
 
     //vertical accuracy
@@ -378,6 +546,28 @@
     return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.verticalAccuracy * 0.000621371192];
 }
 
+- (NSString *)veritcalAccuracyByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kAccUnitsKey];
+    
+    switch ([defaultsValue intValue]) {
+        case 1:
+            return [self verticalAccuracyInKilometres];
+            break;
+        case 2:
+            return [self verticalAccuracyInFeet];
+            break;
+        case 3:
+            return [self verticalAccuracyInMiles];
+            break;
+        default:
+            return [self verticalAccuracyInMeters];
+            break;
+    }
+}
+
+
+
     //horizontal accuracy
 
 - (NSString *)horizontalAccuracyInMeters {
@@ -399,6 +589,30 @@
     
     return [NSString stringWithFormat:@"%.4f miles",self.locationManager.location.horizontalAccuracy * 0.000621371192];
 }
+
+- (NSString *)horizontalAccuracyByUserDefaults {
+    
+    NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kAccUnitsKey];
+    
+    switch ([defaultsValue intValue]) {
+        case 1:
+            return [self horizontalAccuracyInKilometres];
+            break;
+        case 2:
+            return [self horizontalAccuracyInFeet];
+            break;
+        case 3:
+            return [self horizontalAccuracyInMiles];
+            break;
+        default:
+            return [self horizontalAccuracyInMeters];
+            break;
+    }
+    
+}
+
+
+
 
 #pragma mark -
 #pragma mark CLLocationManagerDelegate Methods
@@ -464,7 +678,6 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
   
-    [newHeading retain];
     if (self.currentHeading.trueHeading != newHeading.trueHeading) {
         
         self.currentHeading = newHeading;

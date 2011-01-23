@@ -14,7 +14,6 @@
 
 @interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
     
-    IBOutlet iGPSCustomTableViewCell *tableCell;
     
         // !!!!! ZOMBIES SU ZAPNUTE !!!!!
         //dorobit nastavenia h a v accuracy
@@ -28,12 +27,14 @@
 @property (nonatomic, retain) NSArray *names;
 
 
+
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
+/*
 - (void)setupSpeedUnitsSelectorByDefaults;
 - (void)setupAltitudeUnitsSelelectorByDefaults;
 - (void)setupHeadingSelectorByDefaults;
 - (void)setupCourseSelectorByDefaults;
-
+*/
 
 - (IBAction)showSettings:(id)sender;
 

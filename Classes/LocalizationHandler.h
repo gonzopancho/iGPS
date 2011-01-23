@@ -14,7 +14,6 @@
 
 }
 
-
 + (LocalizationHandler *)sharedHandler;
 - (void)setupKeyValueObserverving;
 - (void)setupBundle;
