@@ -20,22 +20,11 @@
 #pragma mark -
 #pragma mark Initialization
 
-/*
-- (NSDictionary *)data {
-    
-    if (!data) {
-        self.data = [[NSUserDefaults standardUserDefaults] objectForKey:@"data"];
-    }    
-    return data;
-}
-*/
-
 
 - (NSString *)keyForData {
     
     if (!keyForData) {
         self.keyForData = [NSString stringWithString:[self.data objectForKey:@"Key"]];
-        NSLog(@"keyForData: %@",keyForData);
     }
     
     return keyForData;
@@ -59,7 +48,6 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-        //[self.navigationController setToolbarHidden:NO animated:YES];
     [self.tableView reloadData];
 }
 
@@ -71,9 +59,6 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-        //NSLog(@"%@",[[self.parentViewController class] description]);
-    NSLog(@"SettingsDetailView did disappear");
-        //[self sendNotification];
 }
 
 #pragma mark -
@@ -143,6 +128,7 @@
 #pragma mark -
 #pragma mark Memory management
 
+
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
@@ -153,6 +139,7 @@
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
+
 }
 
 

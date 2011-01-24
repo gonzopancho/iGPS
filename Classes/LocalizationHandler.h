@@ -15,10 +15,10 @@
 }
 
 + (LocalizationHandler *)sharedHandler;
-- (void)setupKeyValueObserverving;
-- (void)setupBundle;
 - (NSString *)localizedString:(NSString *)key;
 
+- (void)setupKeyValueObserverving;
+- (void)setupBundle;
 
 + (id)allocWithZone:(NSZone *)zone;
 - (id)copyWithZone:(NSZone *)zone;

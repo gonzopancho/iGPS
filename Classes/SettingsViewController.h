@@ -8,28 +8,19 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol SettingsViewControllerDelegate;
-
 @class SettingsBundleReader;
+
+@protocol SettingsViewControllerDelegate;
 
 @interface SettingsViewController : UITableViewController {
 
-
 }
-    //@property (nonatomic, retain) IBOutlet UINavigationController *nc;
+
 @property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;
 @property (retain) SettingsBundleReader *reader;
 
-    //- (id)initWithCoder:(NSCoder *)coder;
-- (IBAction)done:(id)sender;
 
-    //setup Methods
-    //- (void)performSetupOnBackgroundThread;
-    //- (void)setupData;
-    //- (void)setupTableData;
-    //- (void)setUpDefaultValues;
-    //- (void)setupRowsForAllSections;
-    //- (void)setupSections;
+- (IBAction)done:(id)sender;
 
 @end
 

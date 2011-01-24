@@ -52,24 +52,11 @@ static NSBundle *bundle = nil;
 }
 
 - (void)setBundle:(NSBundle *)newBundle {
-    NSLog(@"!!!!!!!!!!SET BUNDLE !!!!!!!!");
     [newBundle retain];
     [bundle release];
     bundle = newBundle;
-    
 }
 
-/*
-- (void)setupBundleOnBackgroundThread {
-    
-    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
-    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self
-                                                                            selector:@selector(setupBundle) object:nil];
-    [queue addOperation:operation];
-    [operation release];
-    
-}
-*/
 
 - (void)setupBundle {
             
@@ -79,7 +66,6 @@ static NSBundle *bundle = nil;
     if ([language isEqualToString:@"en"]) language = @"English";
     
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
-        //NSLog(@"bundlePath: %@",bundlePath);
     [self setBundle:[NSBundle bundleWithPath:bundlePath]];
 }
 
@@ -95,13 +81,9 @@ static NSBundle *bundle = nil;
 
 - (NSString *)localizedString:(NSString *)key {
     
-        //NSLog(@"localizedString bundle: %@",[self.bundle description]);
     NSString *value = [self.bundle localizedStringForKey:key value:nil table:nil];
     
-        // NSLog(@"localizedString %@",[value description]);
-    if (value)
-        return value;
-        // and maybe fall-back to the default localized string loading
+    if (value) return value;
     return [[NSBundle mainBundle] localizedStringForKey:key value:key table:nil];
 }
 

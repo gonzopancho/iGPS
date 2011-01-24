@@ -28,12 +28,7 @@
 
 }
 
-@property (nonatomic, retain) CLLocationManager *locationManager;
-@property (nonatomic, retain) CLHeading *currentHeading;
-@property (retain) NSDictionary *userDefaultsValues;
 @property (nonatomic, retain) id <LocationProviderDelegate> delegate;
-
-@property (nonatomic, assign) BOOL isHeadingValid;
 
 
 
@@ -50,10 +45,12 @@
 - (void)setAccuracy:(id)newAccuracy;
 - (void)setDistanceFilter:(id)newFilter;
 
+- (NSString *)convertLatitudeToDMS:(float)latitude;
 - (NSString *)latitudeInDegDec;
 - (NSString *)latitudeInDMS;
 - (NSString *)latitudeByUserDefaults;
 
+- (NSString *)convertLongitudeToDMS:(float)longitude;
 - (NSString *)longitudeInDegDec;
 - (NSString *)longitudeInDMS;
 - (NSString *)longitudeByUserDefaults;

@@ -16,7 +16,6 @@
 		28C286E10D94DF7D0034E888 /* RootViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 28C286E00D94DF7D0034E888 /* RootViewController.m */; };
 		28F335F11007B36200424DE2 /* RootViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 28F335F01007B36200424DE2 /* RootViewController.xib */; };
 		3B21E10712CBEBE8006D4C32 /* LocationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B21E10612CBEBE8006D4C32 /* LocationProvider.m */; };
-		3B21E11112CBEC2E006D4C32 /* GPSDataFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */; };
 		3B21E11512CBEC56006D4C32 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B21E11412CBEC56006D4C32 /* CoreLocation.framework */; };
 		3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */; };
 		3B29100112CF5ED9002148B5 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B29100012CF5ED9002148B5 /* Constants.m */; };
@@ -47,8 +46,6 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		3B21E10512CBEBE8006D4C32 /* LocationProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationProvider.h; sourceTree = "<group>"; };
 		3B21E10612CBEBE8006D4C32 /* LocationProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationProvider.m; sourceTree = "<group>"; };
-		3B21E10F12CBEC2E006D4C32 /* GPSDataFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GPSDataFormatter.h; sourceTree = "<group>"; };
-		3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GPSDataFormatter.m; sourceTree = "<group>"; };
 		3B21E11412CBEC56006D4C32 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		3B290D5412CE4F87002148B5 /* SettingsDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsDetailViewController.h; sourceTree = "<group>"; };
 		3B290D5512CE4F87002148B5 /* SettingsDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsDetailViewController.m; sourceTree = "<group>"; };
@@ -95,6 +92,8 @@
 				3BD7717112EA2E5300653243 /* Models */,
 				1D3623240D0F684500981E51 /* iGPSAppDelegate.h */,
 				1D3623250D0F684500981E51 /* iGPSAppDelegate.m */,
+				3B290FFF12CF5ED9002148B5 /* Constants.h */,
+				3B29100012CF5ED9002148B5 /* Constants.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -158,12 +157,8 @@
 		3BD7717112EA2E5300653243 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				3B290FFF12CF5ED9002148B5 /* Constants.h */,
-				3B29100012CF5ED9002148B5 /* Constants.m */,
 				3B8C54D412DAECF400793C6F /* LocalizationHandler.h */,
 				3B8C54D512DAECF400793C6F /* LocalizationHandler.m */,
-				3B21E10F12CBEC2E006D4C32 /* GPSDataFormatter.h */,
-				3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */,
 				3B21E10512CBEBE8006D4C32 /* LocationProvider.h */,
 				3B21E10612CBEBE8006D4C32 /* LocationProvider.m */,
 				3BD77BB612ED8C0000653243 /* SettingsBundleReader.h */,
@@ -267,7 +262,6 @@
 				1D3623260D0F684500981E51 /* iGPSAppDelegate.m in Sources */,
 				28C286E10D94DF7D0034E888 /* RootViewController.m in Sources */,
 				3B21E10712CBEBE8006D4C32 /* LocationProvider.m in Sources */,
-				3B21E11112CBEC2E006D4C32 /* GPSDataFormatter.m in Sources */,
 				3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */,
 				3B290D5612CE4F87002148B5 /* SettingsDetailViewController.m in Sources */,
 				3B29100112CF5ED9002148B5 /* Constants.m in Sources */,

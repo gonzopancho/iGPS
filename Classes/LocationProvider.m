@@ -7,8 +7,16 @@
 //
 
 #import "LocationProvider.h"
-#import "GPSDataFormatter.h"
 #import "Constants.h"
+
+@interface LocationProvider ()
+
+@property (nonatomic, retain) CLLocationManager *locationManager;
+@property (nonatomic, retain) CLHeading *currentHeading;
+@property (retain) NSDictionary *userDefaultsValues;
+@property (nonatomic, assign) BOOL isHeadingValid;
+
+@end
 
 
 @implementation LocationProvider
@@ -95,10 +103,11 @@
 - (id)init {
     
     if ((self = [super init])) {
-        NSLog(@"LocationProvider INIT");
+
         [self setupUserDefaultsValues];
         [self setupKeyValueObserverving];
         [self setupLocationManager];
+        
     }
     return self;
 }
@@ -108,17 +117,28 @@
     if (!self.locationManager) {
         self.locationManager = [[CLLocationManager alloc] init];
     }
-    
-    
     self.locationManager.delegate = self;
+    
     [self setAccuracy:[self.userDefaultsValues objectForKey:kAccuracyKey]];
     [self setDistanceFilter:[self.userDefaultsValues objectForKey:kDistanceKey]];
 }
 
 
+
 - (BOOL)isDoubleValid:(double)value {
     
     return (value >= 0);
+}
+
+- (NSString *)degreeStringFromDecimal:(float)number {
+    
+    int degrees = number;
+    number = (number - degrees) * 60;
+    int minutes = number;
+    int seconds = (number - minutes) * 60;
+    
+    return [NSString stringWithFormat:@"%d˚%d'%d\"",degrees,minutes,seconds];
+    
 }
 
 
@@ -138,8 +158,6 @@
 
     self.userDefaultsValues = newDefaults;
     [newDefaults release];
-    
-    NSLog(@"userDefaultsValues: %@",[self.userDefaultsValues description]);
     
 }
 
@@ -248,12 +266,18 @@
 
     //Latitude
 
+- (NSString *)convertLatitudeToDMS:(float)latitude {
+    
+    if (latitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:latitude * -1.],NSLocalizedString(@"S",@"Juh")];
+    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:latitude],NSLocalizedString(@"N",@"Sever")];
+}
+
 - (NSString *)latitudeInDegDec {
     return [NSString stringWithFormat:@"%f˚",self.locationManager.location.coordinate.latitude];
 }
 
 - (NSString *)latitudeInDMS {
-    return [NSString stringWithFormat:@"%@",[GPSDataFormatter latitudeInDMS:self.locationManager.location.coordinate.latitude]];   
+    return [NSString stringWithFormat:@"%@",[self convertLatitudeToDMS:self.locationManager.location.coordinate.latitude]];   
 }
 
 - (NSString *)latitudeByUserDefaults {
@@ -268,12 +292,18 @@
 
     //Longitude
 
+- (NSString *)convertLongitudeToDMS:(float)longitude {
+    
+    if (longitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:longitude * -1.],NSLocalizedString(@"W",@"Západ")];
+    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:longitude],NSLocalizedString(@"E",@"Východ")];    
+}
+
 - (NSString *)longitudeInDegDec {
     return [NSString stringWithFormat:@"%f˚",self.locationManager.location.coordinate.longitude];
 }
 
 - (NSString *)longitudeInDMS {
-    return [NSString stringWithFormat:@"%@",[GPSDataFormatter longitudeInDMS:self.locationManager.location.coordinate.longitude]];
+    return [NSString stringWithFormat:@"%@",[self convertLongitudeToDMS:self.locationManager.location.coordinate.longitude]];
 }
 
 - (NSString *)longitudeByUserDefaults {

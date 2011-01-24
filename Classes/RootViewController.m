@@ -7,12 +7,23 @@
 //
 
 #import "RootViewController.h"
+#import "iGPSCustomTableViewCell.h"
+#import "SettingsViewController.h"
+#import "LocationProvider.h"
 #import "Constants.h"
 #import <dispatch/dispatch.h>
 
+@interface RootViewController ()
+
+- (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
+- (void)makeTitles;
+
+@end
+
+
+
 @implementation RootViewController
 
-    //@synthesize nc;
 @synthesize locationProvider;
 @synthesize names;
 @synthesize values;
@@ -35,83 +46,34 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setTitle:@"iGPS"];
-    [self makeTitles];
-        //[self.navigationController setToolbarHidden:NO animated:YES];
-    
-        //test
-        // self.title = NSLocalizedString(@"Settings",nil);
-        //test end
-    
+            
     if (!self.locationProvider) {
         self.locationProvider = [[LocationProvider alloc] init];
-        
     }
     [self.locationProvider setDelegate:self];
+    
+    [self setTitle:@"iGPS"];
+    [self makeTitles];
     [self setupNavigationItems];
 
-    
-
-    /*
-    SettingsViewController *svc = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
-    
-    [svc setDelegate:self];
-    [svc setTitle:NSLocalizedString(@"Settings",nil)]; 
-    
-    if (!self.nc) {
-        self.nc = [[UINavigationController alloc] init];
-    }
-    [self.nc setViewControllers:[NSArray arrayWithObject:svc]];
-    [svc release]; 
-    */
-    
-
 }
-
-/*
-- (NSArray *)toolbarItems {
-    
-    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Settings",nil)
-                                                                       style:UIBarButtonItemStyleBordered
-                                                                      target:self
-                                                                      action:@selector(showSettings:)];
-    UIBarButtonItem *languageButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
-                                                                       style:UIBarButtonItemStyleBordered
-                                                                      target:self
-                                                                      action:@selector(changeLanguage:)];
-    
-    UIBarButtonItem *flexibleSpace = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace 
-                                                                                   target:nil action:nil];
-    
-    NSArray *buttons = [NSArray arrayWithObjects:languageButton,flexibleSpace,settingsButton,nil];
-    
-    [languageButton release];
-    [settingsButton release];
-    [flexibleSpace release];
-    
-    return buttons;
-}
-*/
-
 
 - (void)makeTitles {
     
-    NSMutableArray *array = [self.tabBarController.viewControllers mutableCopy];
+    NSArray *array = self.tabBarController.viewControllers;
+    
     UINavigationController *nc = [array objectAtIndex:1];
+    
     if ([nc isKindOfClass:[UINavigationController class]]) {
         nc.title = NSLocalizedString(@"Settings",nil); 
     }
-    
-    NSLog(@"array = %@",[array description]);
-    [array release];
     
 }
 
 
 - (IBAction)changeLanguage:(id)sender {
     
-    NSMutableArray *languages = [NSMutableArray arrayWithArray:
-                                 [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"]];
+    NSMutableArray *languages = [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] mutableCopy];
     
     NSString *lang = [languages objectAtIndex:0];
     
@@ -122,26 +84,20 @@
     
     [languages replaceObjectAtIndex:0 withObject:lang];
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];
+    [languages release];
     
     [self makeTitles];
-    [self viewWillAppear:NO];
-        //[self.tableView reloadData];
     [self setupNavigationItems];
-        //[self.navigationController loadView];
-        //    [self.navigationController setToolbarHidden:YES animated:YES];
-        //    [self.navigationController setToolbarHidden:NO animated:YES];         
-       
+    [self viewWillAppear:NO];
     
 }
 
 - (void)settingsViewControllerDidFinish {
-        //[self.tableView reloadData];
     [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)locationProviderDidUpdateLocation {
-    
-    NSLog(@"locationProviderDidUpdateLocation");    
+     
 }
 
 - (void)updateCellForIndexPath:(NSIndexPath *)indexPath withSelector:(SEL)aSelector {
@@ -153,7 +109,6 @@
         [cell setMainTextLabel:label];
     });
     
-        // NSLog(@"label: %@, index: %d",label,indexPath.row);
     [self setStringValue:label atIndex:indexPath];
 }
 
@@ -210,7 +165,7 @@
 - (void)locationProviderDidUpdateAltitude {
     
 
-    dispatch_queue_t altitudeQueue = dispatch_queue_create("sk.jakubpetrik.iGPS.LatitudeQueue", NULL);
+    dispatch_queue_t altitudeQueue = dispatch_queue_create("iGPS.LatitudeQueue", NULL);
         dispatch_async(altitudeQueue, ^{
         
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)] inSection:0];
@@ -286,15 +241,15 @@
         dispatch_release(horizontalAccQueue); 
 }
 
+
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
     
-        // NSLog(@"Index Value: %i",index.row);
     if ([self.values count] > index.row) {
         [self.values replaceObjectAtIndex:index.row withObject:value];
     }
     
-    
 }
+
 
 - (void)setupValues {
     
@@ -360,18 +315,7 @@
 }
 
 
-/*
-- (IBAction)showSettings:(id)sender {
-    
-    
-        
-    [self.nc setModalTransitionStyle:UIModalTransitionStyleCoverVertical];
-    [self presentModalViewController:self.nc animated:YES];
-        //[self.navigationController pushViewController:svc animated:YES];
-        //[svc release];  
-    
-}
-*/
+
 - (void)doSetup {
 
     [self loadData];
@@ -379,16 +323,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-        //NSLog(@"RVC viewWillAppear:" );
-    [super viewWillAppear:animated];
+
     [self.locationProvider startUpdatingLocationAndHeading];
-    
     [self doSetup];
-}
-
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+    [super viewWillAppear:animated];
     
 }
 
@@ -397,13 +335,6 @@
     [self.locationProvider stopUpdatingLocationAndHeading];
     [super viewWillDisappear:animated];
 }
-
-
-- (void)viewDidDisappear:(BOOL)animated {
-        //NSLog(@"viewDidDisappear");
-	[super viewDidDisappear:animated];
-}
-
 
 
 
@@ -460,24 +391,26 @@
 #pragma mark -
 #pragma mark Memory management
 
+- (void)releaseOutlets {
+    
+    self.names = nil;
+    self.values = nil;
+    self.locationProvider = nil;
+    
+}
+
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
-    
-    // Relinquish ownership any cached data, images, etc that aren't in use.
 }
 
 - (void)viewDidUnload {  
-    self.names = nil;
-    self.values = nil;
+    [self releaseOutlets];
 }
 
 
 - (void)dealloc {
-        //[nc release];
-    [names release];
-    [values release];
-    [locationProvider release];
+    [self releaseOutlets];
     [super dealloc];
 }
 
