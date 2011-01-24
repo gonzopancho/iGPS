@@ -10,28 +10,26 @@
 
 @protocol SettingsViewControllerDelegate;
 
+@class SettingsBundleReader;
 
 @interface SettingsViewController : UITableViewController {
 
 
 }
-
+    //@property (nonatomic, retain) IBOutlet UINavigationController *nc;
 @property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;
-@property (retain) NSArray *tableData;
-@property (retain) NSArray *rowsForAllSections;
-@property (retain) NSArray *sections;
-@property (retain) NSArray *defaultValues;
+@property (retain) SettingsBundleReader *reader;
 
-
+    //- (id)initWithCoder:(NSCoder *)coder;
 - (IBAction)done:(id)sender;
 
     //setup Methods
     //- (void)performSetupOnBackgroundThread;
-- (void)setupData;
-- (void)setupTableData;
-- (void)setUpDefaultValues;
-- (void)setupRowsForAllSections;
-- (void)setupSections;
+    //- (void)setupData;
+    //- (void)setupTableData;
+    //- (void)setUpDefaultValues;
+    //- (void)setupRowsForAllSections;
+    //- (void)setupSections;
 
 @end
 

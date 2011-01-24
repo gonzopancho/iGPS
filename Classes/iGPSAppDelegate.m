@@ -7,13 +7,17 @@
 //
 
 #import "iGPSAppDelegate.h"
+#import "RootViewController.h"
+#import "SettingsViewController.h"
 #import "Constants.h"
+#import "SettingsBundleReader.h"
 
 
 @implementation iGPSAppDelegate
 
 @synthesize window;
 @synthesize navigationController;
+@synthesize tabBarController;   
 
 
 
@@ -93,9 +97,12 @@
         [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
         [[NSUserDefaults standardUserDefaults] synchronize];
     }
+    
+    SettingsBundleReader *reader = [[SettingsBundleReader alloc] init];
+    [reader setup];
+    [reader release];
       
-
-    [self.window addSubview:navigationController.view];
+    [self.window addSubview:tabBarController.view];
     [self.window makeKeyAndVisible];
     
     
@@ -118,6 +125,7 @@
 #pragma mark Memory management
 
 - (void)dealloc {
+    [tabBarController release];
     [navigationController release];
 	[window release];
 	[super dealloc];

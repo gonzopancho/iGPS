@@ -249,7 +249,7 @@
     //Latitude
 
 - (NSString *)latitudeInDegDec {
-    return [NSString stringWithFormat:@"%f",self.locationManager.location.coordinate.latitude];
+    return [NSString stringWithFormat:@"%f˚",self.locationManager.location.coordinate.latitude];
 }
 
 - (NSString *)latitudeInDMS {
@@ -260,16 +260,16 @@
     
     NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kCoordsKey];
     
-    if ([defaultsValue intValue] == 0) return [self latitudeInDegDec];
+    if ([defaultsValue intValue] == 0) return [self latitudeInDMS];
     
-    return [self latitudeInDMS];
+    return [self latitudeInDegDec];
 }
 
 
     //Longitude
 
 - (NSString *)longitudeInDegDec {
-    return [NSString stringWithFormat:@"%f",self.locationManager.location.coordinate.longitude];
+    return [NSString stringWithFormat:@"%f˚",self.locationManager.location.coordinate.longitude];
 }
 
 - (NSString *)longitudeInDMS {
@@ -280,9 +280,9 @@
     
     NSNumber *defaultsValue = (NSNumber *)[self.userDefaultsValues objectForKey:kCoordsKey];
     
-    if ([defaultsValue intValue] == 0) return [self longitudeInDegDec];
+    if ([defaultsValue intValue] == 0) return [self longitudeInDMS];
     
-    return [self longitudeInDMS];
+    return [self longitudeInDegDec];
 }
 
 

@@ -15,13 +15,14 @@
 @interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
     
 }
-@property (nonatomic, retain) UINavigationController *nc;
+    //@property (nonatomic, retain) UINavigationController *nc;
 @property (nonatomic, retain) LocationProvider *locationProvider;
 @property (retain) NSMutableArray *values;
 @property (retain) NSArray *names;
 
 
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
-- (IBAction)showSettings:(id)sender;
+    //- (IBAction)showSettings:(id)sender;
+- (void)makeTitles;
 
 @end

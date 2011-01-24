@@ -12,7 +12,7 @@
 
 @implementation RootViewController
 
-@synthesize nc;
+    //@synthesize nc;
 @synthesize locationProvider;
 @synthesize names;
 @synthesize values;
@@ -20,18 +20,39 @@
 #pragma mark -
 #pragma mark View lifecycle
 
+- (void)setupNavigationItems {
+    
+    UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
+                                                             style:UIBarButtonItemStyleBordered
+                                                            target:self
+                                                            action:@selector(changeLanguage:)];  
+    self.navigationItem.leftBarButtonItem = item;  
+    
+    [item release];  
+    
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setTitle:@"iGPS"];
-    [self.navigationController setToolbarHidden:NO animated:YES];
+    [self makeTitles];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
+    
+        //test
+        // self.title = NSLocalizedString(@"Settings",nil);
+        //test end
     
     if (!self.locationProvider) {
         self.locationProvider = [[LocationProvider alloc] init];
         
     }
     [self.locationProvider setDelegate:self];
+    [self setupNavigationItems];
+
     
+
+    /*
     SettingsViewController *svc = [[SettingsViewController alloc] initWithStyle:UITableViewStyleGrouped];
     
     [svc setDelegate:self];
@@ -42,11 +63,12 @@
     }
     [self.nc setViewControllers:[NSArray arrayWithObject:svc]];
     [svc release]; 
-    
+    */
     
 
 }
 
+/*
 - (NSArray *)toolbarItems {
     
     UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Settings",nil)
@@ -69,7 +91,21 @@
     
     return buttons;
 }
+*/
 
+
+- (void)makeTitles {
+    
+    NSMutableArray *array = [self.tabBarController.viewControllers mutableCopy];
+    UINavigationController *nc = [array objectAtIndex:1];
+    if ([nc isKindOfClass:[UINavigationController class]]) {
+        nc.title = NSLocalizedString(@"Settings",nil); 
+    }
+    
+    NSLog(@"array = %@",[array description]);
+    [array release];
+    
+}
 
 
 - (IBAction)changeLanguage:(id)sender {
@@ -87,10 +123,11 @@
     [languages replaceObjectAtIndex:0 withObject:lang];
     [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];
     
-    
+    [self makeTitles];
     [self viewWillAppear:NO];
         //[self.tableView reloadData];
-    [self.navigationController loadView];
+    [self setupNavigationItems];
+        //[self.navigationController loadView];
         //    [self.navigationController setToolbarHidden:YES animated:YES];
         //    [self.navigationController setToolbarHidden:NO animated:YES];         
        
@@ -323,7 +360,7 @@
 }
 
 
-
+/*
 - (IBAction)showSettings:(id)sender {
     
     
@@ -334,7 +371,7 @@
         //[svc release];  
     
 }
-
+*/
 - (void)doSetup {
 
     [self loadData];
@@ -437,7 +474,7 @@
 
 
 - (void)dealloc {
-    [nc release];
+        //[nc release];
     [names release];
     [values release];
     [locationProvider release];

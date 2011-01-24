@@ -27,6 +27,9 @@
 		3B9B917312E75E9100B19A25 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 3B9B917212E75E9100B19A25 /* Settings.bundle */; };
 		3BC7B68112CD397F00852765 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BC7B67F12CD397F00852765 /* SettingsViewController.m */; };
 		3BC7B68212CD397F00852765 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3BC7B68012CD397F00852765 /* SettingsViewController.xib */; };
+		3BD77A5A12ECE9BC00653243 /* Scanner.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77A5812ECE9BC00653243 /* Scanner.png */; };
+		3BD77A5B12ECE9BC00653243 /* Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77A5912ECE9BC00653243 /* Tools.png */; };
+		3BD77BB812ED8C0000653243 /* SettingsBundleReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +65,10 @@
 		3BC7B67E12CD397F00852765 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
 		3BC7B67F12CD397F00852765 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
 		3BC7B68012CD397F00852765 /* SettingsViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = Classes/SettingsViewController.xib; sourceTree = "<group>"; };
+		3BD77A5812ECE9BC00653243 /* Scanner.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Scanner.png; sourceTree = "<group>"; };
+		3BD77A5912ECE9BC00653243 /* Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tools.png; sourceTree = "<group>"; };
+		3BD77BB612ED8C0000653243 /* SettingsBundleReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsBundleReader.h; sourceTree = "<group>"; };
+		3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsBundleReader.m; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iGPS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iGPS-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -124,6 +131,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3BD77A5812ECE9BC00653243 /* Scanner.png */,
+				3BD77A5912ECE9BC00653243 /* Tools.png */,
 				3B9B917212E75E9100B19A25 /* Settings.bundle */,
 				3BC7B68012CD397F00852765 /* SettingsViewController.xib */,
 				28F335F01007B36200424DE2 /* RootViewController.xib */,
@@ -157,6 +166,8 @@
 				3B21E11012CBEC2E006D4C32 /* GPSDataFormatter.m */,
 				3B21E10512CBEBE8006D4C32 /* LocationProvider.h */,
 				3B21E10612CBEBE8006D4C32 /* LocationProvider.m */,
+				3BD77BB612ED8C0000653243 /* SettingsBundleReader.h */,
+				3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -240,6 +251,8 @@
 				3B8C52A412D850F800793C6F /* TableCellView.xib in Resources */,
 				3B8C540E12DA7A6A00793C6F /* Localizable.strings in Resources */,
 				3B9B917312E75E9100B19A25 /* Settings.bundle in Resources */,
+				3BD77A5A12ECE9BC00653243 /* Scanner.png in Resources */,
+				3BD77A5B12ECE9BC00653243 /* Tools.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +273,7 @@
 				3B29100112CF5ED9002148B5 /* Constants.m in Sources */,
 				3B8C528812D8472400793C6F /* iGPSCustomTableViewCell.m in Sources */,
 				3B8C54D612DAECF400793C6F /* LocalizationHandler.m in Sources */,
+				3BD77BB812ED8C0000653243 /* SettingsBundleReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

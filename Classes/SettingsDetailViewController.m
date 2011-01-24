@@ -59,7 +59,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    [self.navigationController setToolbarHidden:NO animated:YES];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
     [self.tableView reloadData];
 }
 
@@ -71,8 +71,9 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    NSLog(@"%@",[[self.parentViewController class] description]);
-    [self sendNotification];
+        //NSLog(@"%@",[[self.parentViewController class] description]);
+    NSLog(@"SettingsDetailView did disappear");
+        //[self sendNotification];
 }
 
 #pragma mark -
@@ -134,6 +135,7 @@
         self.selectedRow = [NSNumber numberWithInt:indexPath.row];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    [self sendNotification];
     
 }
 

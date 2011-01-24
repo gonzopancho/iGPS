@@ -7,6 +7,7 @@
 //
 
 #import "SettingsViewController.h"
+#import "SettingsBundleReader.h"
 #import "SettingsDetailViewController.h"
 #import "Constants.h"
 #import <dispatch/dispatch.h>
@@ -15,16 +16,38 @@
 
 @implementation SettingsViewController
 
-@synthesize tableData;
-@synthesize rowsForAllSections;
-@synthesize sections;
+    //@synthesize tableData;
+    //@synthesize rowsForAllSections;
+    //@synthesize sections;
 @synthesize delegate;
-@synthesize defaultValues;
+    //@synthesize defaultValues;
+    //@synthesize nc;
+@synthesize reader;
+
+/*
+- (id) initWithCoder: (NSCoder *) coder {
+        // Override initWithStyle: if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
+    if (self = [super initWithStyle:UITableViewStyleGrouped]) {
+        [self performSelector:@selector(setupData)];
+    }
+    return self;
+}
+*/
+
+
+- (void)awakeFromNib {
+    
+    if (!self.reader) {
+        self.reader = [[SettingsBundleReader alloc] init];
+    }
+    [self performSelector:@selector(setupData)];
+    
+}
 
 #pragma mark -
 #pragma mark View lifecycle
 
-
+/*
 - (void)setupTableData {
     
         //self.tableData = [[DataHandler sharedDataHandler] rootPlist];
@@ -121,7 +144,7 @@
      
         //self.defaultValues = [[DataHandler sharedDataHandler] selectedKeys];
 }
-
+*/
 
 - (IBAction)done:(id)sender {
 	NSLog(@"done:");
@@ -135,13 +158,13 @@
         //[self setUpDefaultValues];
         //});
         // [NSThread detachNewThreadSelector:@selector(setUpDefaultValues) toTarget:self withObject:nil];
-    [self performSelector:@selector(setupData)];
+        //[self performSelector:@selector(setupData)];
     
     [super viewDidLoad];
     
 }
 
-
+/*
 - (NSArray *)toolbarItems {
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Done",nil)
@@ -161,16 +184,20 @@
     
     
 }
-
+*/
     //   !!!!!PLAYGROUND!!!! 
 
 - (void)setupData {
     
     dispatch_queue_t setupQueue = dispatch_queue_create("iGPS.SettingsViewController.setupQueue", NULL);
     dispatch_async(setupQueue, ^{
+        /*
         [self setupTableData];
         [self setupSections];
         [self setupRowsForAllSections];
+        */
+        
+        [self.reader setup];
     });
     dispatch_release(setupQueue);
         
@@ -182,10 +209,15 @@
     dispatch_queue_t refreshQueue = dispatch_queue_create("iGPS.SettingsViewController.refreshQueue", NULL);
     dispatch_async(refreshQueue, ^{
         
-        [self setUpDefaultValues];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        @synchronized(self) {
+        
+                //[self setUpDefaultValues];
+            [self.reader loadDefaultValues];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+            });
+        }
+        
     });
     dispatch_release(refreshQueue);
     
@@ -193,7 +225,7 @@
 
 - (NSDictionary *)rowForIndexPath:(NSIndexPath *)indexPath {
     
-    return [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    return [[self.reader.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
 }
 
@@ -202,12 +234,14 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
+        self.title = NSLocalizedString(@"Settings",nil);
+        //self.nc.title = NSLocalizedString(@"Settings",nil);
         // [self setupData];
         //[self.tableView reloadData];
     
     [self refreshTable];
     NSLog(@"viewWillAppear");
-    [self.navigationController setToolbarHidden:NO animated:YES];
+        //[self.navigationController setToolbarHidden:NO animated:YES];
     [super viewWillAppear:animated];
     
         
@@ -215,7 +249,13 @@
 
 
 - (void)viewWillDisappear:(BOOL)animated {
+        // self.title = NSLocalizedString(@"Back",nil);
     [super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    
+    [super viewDidDisappear:animated];
 }
 
 
@@ -227,21 +267,21 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)table {
 
-    return [self.sections count]; 
+    return [self.reader.sections count]; 
     
 }
 
 
 - (NSInteger)tableView:(UITableView *)table numberOfRowsInSection:(NSInteger)section {
     
-    return [[self.rowsForAllSections objectAtIndex:section] count];
+    return [[self.reader.rows objectAtIndex:section] count];
        
 }
 
 
 - (NSString *)tableView:(UITableView *)table titleForHeaderInSection:(NSInteger)section {
     
-    return NSLocalizedString([[self.sections objectAtIndex:section] objectForKey:@"Title"],nil);
+    return NSLocalizedString([[self.reader.sections objectAtIndex:section] objectForKey:@"Title"],nil);
 }
 
 
@@ -257,8 +297,9 @@
     
     NSDictionary *row = [self rowForIndexPath:indexPath];
     NSString *textLabel = NSLocalizedString([row objectForKey:@"Title"],nil);
-    NSString *detailLabel = [[self.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+    NSString *detailLabel = [[self.reader.defaultValues objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
     
+    NSLog(@"detailText:%@",detailLabel);
     
     cell.textLabel.text = textLabel;
 
@@ -279,19 +320,21 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *row = [[self.rowsForAllSections objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
+    NSDictionary *row = [[self.reader.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
     
              
     if ([[row objectForKey:@"Type"] isEqual:[NSString stringWithString:@"PSMultiValueSpecifier"]]) {
-        NSLog(@"TRUE");
+        
         SettingsDetailViewController *dvc = [[SettingsDetailViewController alloc] 
                                              initWithNibName:@"SettingsViewController"
                                              bundle:nil];
         dvc.data = row;
+        NSLog(@"row %@",[row description]);
         
         [dvc setTitle:NSLocalizedString([row objectForKey:@"Title"],nil)];
         [self.navigationController pushViewController:dvc animated:YES];
         [dvc release];
+        NSLog(@"TRUE");
     }
     
     [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
@@ -313,20 +356,21 @@
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
     // For example: self.myOutlet = nil;
     
-    self.defaultValues = nil;
-    self.sections = nil;
-    self.rowsForAllSections = nil;
-    self.tableData = nil;
+        //self.defaultValues = nil;
+        //self.sections = nil;
+        //self.rowsForAllSections = nil;
+        //self.tableData = nil;
 
 }
 
 
 - (void)dealloc {
-
-    [defaultValues release];
-    [sections release];
-    [rowsForAllSections release];
-    [tableData release];
+    [reader release];
+        // [nc release];
+        //[defaultValues release];
+        //[sections release];
+        //[rowsForAllSections release];
+        //[tableData release];
     [super dealloc];
 }
 
