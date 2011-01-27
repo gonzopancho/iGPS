@@ -45,6 +45,8 @@
 - (void)setAccuracy:(id)newAccuracy;
 - (void)setDistanceFilter:(id)newFilter;
 
+- (void)updateDefaults:(NSNotification *)aNotification;
+
 - (NSString *)convertLatitudeToDMS:(float)latitude;
 - (NSString *)latitudeInDegDec;
 - (NSString *)latitudeInDMS;

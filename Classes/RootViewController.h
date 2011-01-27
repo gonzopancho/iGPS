@@ -7,15 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "LocationProvider.h"
 
 
-@class LocationProvider;
-
-@interface RootViewController : UITableViewController <LocationProviderDelegate,SettingsViewControllerDelegate> {
+@interface RootViewController : UITableViewController <LocationProviderDelegate> {
     
 }
 @property (nonatomic, retain) LocationProvider *locationProvider;
-@property (retain) NSMutableArray *values;
-@property (retain) NSArray *names;
+@property (nonatomic, retain) NSMutableArray *values;
+@property (nonatomic, retain) NSArray *names;
 
 @end

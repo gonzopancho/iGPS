@@ -23,6 +23,14 @@
     
 }
 
+- (id)initAndSetup {
+    
+    if ((self = [super init])) {
+        [self setup];
+    }
+    return self;
+}
+
 - (NSArray *)settingsBundle {
     
     NSString *pathStr = [[NSBundle mainBundle] bundlePath];
@@ -85,6 +93,14 @@
     self.sections = tempSections;
 
 }
+
+
+- (NSDictionary *)dataForIndexPath:(NSIndexPath *)indexPath {
+    
+    return [[self.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
+}
+
+
 
 
 

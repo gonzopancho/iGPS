@@ -12,8 +12,10 @@
 
 @implementation LocalizationHandler
 
+@synthesize appleLanguages;
+@synthesize bundle;
+
 static LocalizationHandler *sharedLocalizator = nil;
-static NSBundle *bundle = nil;
 
 - (id)init {
     
@@ -34,28 +36,27 @@ static NSBundle *bundle = nil;
 
 - (void)defaultsChanged:(NSNotification *)aNotification {
     
-    [self setupBundle];
+    if (![sharedLocalizator.appleLanguages isEqualToArray:[[[aNotification object] dictionaryRepresentation] objectForKey:@"AppleLanguages"]]) {
+        
+        sharedLocalizator.appleLanguages = [[[aNotification object] dictionaryRepresentation] objectForKey:@"AppleLanguages"];
+        
+        [self setupBundle];
+        NSLog(@"LocalizationHandler defaultsChanged" );
+    }
+    
+    
 }
 
 - (void)setupKeyValueObserverving {
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
     [center addObserver:self
                selector:@selector(defaultsChanged:)
                    name:NSUserDefaultsDidChangeNotification
                  object:nil];   
-    
-    [center addObserver:self
-             forKeyPath:@"AppleLanguages"
-                options:NSKeyValueObservingOptionNew
-                context:nil];
 }
 
-- (void)setBundle:(NSBundle *)newBundle {
-    [newBundle retain];
-    [bundle release];
-    bundle = newBundle;
-}
 
 
 - (void)setupBundle {
@@ -66,7 +67,7 @@ static NSBundle *bundle = nil;
     if ([language isEqualToString:@"en"]) language = @"English";
     
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
-    [self setBundle:[NSBundle bundleWithPath:bundlePath]];
+    sharedLocalizator.bundle = [NSBundle bundleWithPath:bundlePath];
 }
 
 
@@ -81,7 +82,7 @@ static NSBundle *bundle = nil;
 
 - (NSString *)localizedString:(NSString *)key {
     
-    NSString *value = [self.bundle localizedStringForKey:key value:nil table:nil];
+    NSString *value = [sharedLocalizator.bundle localizedStringForKey:key value:nil table:nil];
     
     if (value) return value;
     return [[NSBundle mainBundle] localizedStringForKey:key value:key table:nil];

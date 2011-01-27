@@ -8,6 +8,7 @@
 
 #import "SettingsDetailViewController.h"
 #import "SettingsViewController.h"
+#import "SettingsBundleReader.h"
 
 
 @implementation SettingsDetailViewController
@@ -20,6 +21,24 @@
 #pragma mark -
 #pragma mark Initialization
 
+- (void)makeTitles {
+    
+    self.title = NSLocalizedString([self.data objectForKey:@"Title"],nil);
+    self.navigationController.navigationBar.backItem.title = NSLocalizedString(@"Settings",nil);
+    
+}
+
+
+- (void)reloadData:(NSNotification *)aNotification {
+    
+    NSNumber *number = [[[aNotification object] dictionaryRepresentation] objectForKey:self.keyForData];
+    
+    if (![number isEqualToNumber:self.selectedRow]) {
+        self.selectedRow = number;
+        [self.tableView reloadData];
+    }
+    
+}
 
 - (NSString *)keyForData {
     
@@ -44,10 +63,38 @@
 #pragma mark -
 #pragma mark View lifecycle
 
+- (void)viewDidLoad {
+    
+    NSLog(@"viewDidLoad");
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reloadData:)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:nil];
+    
+    @try {
+        
+        NSString *keyPath = [self.data objectForKey:@"Title"];
+        if ([keyPath isKindOfClass:[NSString class]]) {
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self
+                                                   forKeyPath:keyPath
+                                                      options:NSKeyValueObservingOptionNew
+                                                      context:nil];
+        }
+    }
+    @catch (NSException * e) {
+        NSLog(@"%@",[e description]);
+    }    
+    
+
+    [super viewDidLoad];
+}
+
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+    [self makeTitles];
     [self.tableView reloadData];
 }
 
@@ -128,6 +175,11 @@
 #pragma mark -
 #pragma mark Memory management
 
+- (void)releaseOutlets {
+    self.selectedRow = nil;
+    self.keyForData = nil;
+    self.data = nil;
+}
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
@@ -138,15 +190,17 @@
 
 - (void)viewDidUnload {
     // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
+    // For example: self.myOutlet = nil;    
+    [self releaseOutlets];
 
 }
 
 
 - (void)dealloc {
-    [selectedRow release];
-    [keyForData release];
-    [data release];
+    
+    NSLog(@"dealloc");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self releaseOutlets];
     [super dealloc];
 }
 

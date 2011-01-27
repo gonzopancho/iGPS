@@ -16,9 +16,14 @@
 @property (retain) NSArray *sections;
 @property (retain) NSArray *defaultValues;
 
+- (id)initAndSetup;
+
 - (void)setup;
 - (void)loadRowsAndSections;
 - (void)loadDefaultValues;
+
+- (NSDictionary *)dataForIndexPath:(NSIndexPath *)indexPath;
+
 
 
 @end

@@ -54,48 +54,85 @@
                                coords,kCoordsKey,nil];
 }
 
+- (void)notifyDelegateWithSelector:(SEL)aSelector {
+    
+    if ([[self delegate] respondsToSelector:aSelector]) {
+        [[self delegate] performSelector:aSelector];
+    }
+}
+
+- (void)defaultsChanged:(NSNotification *)aNotification {
+    
+    
+    NSDictionary *dict = [[aNotification object] dictionaryRepresentation];
+    
+    if (![[dict objectForKey:kSpeedKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kSpeedKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kSpeedKey object:[dict objectForKey:kSpeedKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateSpeed)];
+        
+    }
+    if (![[dict objectForKey:kAccuracyKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kAccuracyKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kAccuracyKey object:[dict objectForKey:kAccuracyKey]]];
+
+    }
+    if (![[dict objectForKey:kAccUnitsKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kAccUnitsKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kAccUnitsKey object:[dict objectForKey:kAccUnitsKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateHorizontalAccuracy)];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateVerticalAccuracy)];
+        
+    }
+    if (![[dict objectForKey:kAltitudeKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kAltitudeKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kAltitudeKey object:[dict objectForKey:kAltitudeKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateAltitude)];
+        
+    }
+    if (![[dict objectForKey:kNorthKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kNorthKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kNorthKey object:[dict objectForKey:kNorthKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateHeading)];
+
+    }
+    if (![[dict objectForKey:kDistanceKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kDistanceKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kDistanceKey object:[dict objectForKey:kDistanceKey]]];
+
+    }
+    if (![[dict objectForKey:kCourseKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kCourseKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kCourseKey object:[dict objectForKey:kCourseKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateCourse)];
+
+    }
+    if (![[dict objectForKey:kCoordsKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kCoordsKey]]) {
+        
+        [self updateDefaults:[NSNotification notificationWithName:kCoordsKey object:[dict objectForKey:kCoordsKey]]];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateLatitude)];
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateLongitude)];
+
+    }
+    
+}
+
 - (void)setupKeyValueObserverving {
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(accuracyChanged:)
                                                  name:kAccuracyKey
                                                object:nil];
+    
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(distanceFilterChanged:) 
                                                  name:kDistanceKey
                                                object:nil];
     
-        //notifications for methods change
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kNorthKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kCoordsKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kAccUnitsKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kAltitudeKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kSpeedKey
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateDefaults:)
-                                                 name:kCourseKey
-                                               object:nil];
-    
+                                             selector:@selector(defaultsChanged:)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:nil];    
     
 }
 
@@ -145,7 +182,6 @@
 #pragma mark -
 #pragma mark LocationProvider life cycle
 
-
 - (void)updateDefaults:(NSNotification *)aNotification {
     
     NSMutableDictionary * newDefaults = [NSMutableDictionary dictionary];
@@ -155,6 +191,7 @@
     } 
     
     [newDefaults setObject:[aNotification object] forKey:[aNotification name]];
+    
 
     self.userDefaultsValues = newDefaults;
     [newDefaults release];
@@ -164,11 +201,14 @@
 - (void)accuracyChanged:(NSNotification *)aNotification {
     
     [self setAccuracy:[aNotification object]];
+            NSLog(@"accuracy set");
+
 }
 
 - (void)distanceFilterChanged:(NSNotification *)aNotification {
     
     [self setDistanceFilter:[aNotification object]];
+            NSLog(@"distanceFilter set");
     
 }
 
@@ -211,8 +251,43 @@
     if ([newFilter isKindOfClass:[NSNumber class]]) {
         NSNumber *distanceFilter = newFilter;
         
-        if ([distanceFilter doubleValue] != self.locationManager.distanceFilter) {
-            self.locationManager.distanceFilter = [distanceFilter doubleValue];
+        switch ([distanceFilter intValue]) {
+            case 1:
+                self.locationManager.distanceFilter = 50;
+                break;
+            case 2:
+                self.locationManager.distanceFilter = 100;
+                break;
+            case 3:
+                self.locationManager.distanceFilter = 150;
+                break;
+            case 4:
+                self.locationManager.distanceFilter = 300;
+                break;
+            case 5:
+                self.locationManager.distanceFilter = 500;
+                break;
+            case 6:
+                self.locationManager.distanceFilter = 700;
+                break;
+            case 7:
+                self.locationManager.distanceFilter = 1000;
+                break;
+            case 8:
+                self.locationManager.distanceFilter = 1500;
+                break;
+            case 9:
+                self.locationManager.distanceFilter = 2000;
+                break;
+            case 10:
+                self.locationManager.distanceFilter = 2500;
+                break;
+            case 11:
+                self.locationManager.distanceFilter = 3000;
+                break;
+            default:
+                self.locationManager.distanceFilter = 10;
+                break;
         }
     }
     
@@ -685,54 +760,37 @@
         [[self delegate] locationProviderDidUpdateLocation];
         if (oldLocation.coordinate.latitude != newLocation.coordinate.latitude) {
             
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateLatitude)]) {
-                [[self delegate] locationProviderDidUpdateLatitude];
-            }
-            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateLatitude)];
         }
         
         if (oldLocation.coordinate.longitude != newLocation.coordinate.longitude) {
             
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateLongitude)]) {
-                [[self delegate] locationProviderDidUpdateLongitude];
-            }
-            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateLongitude)];
         }
         
         if (oldLocation.altitude != newLocation.altitude) {
             
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateAltitude)]) {
-                [[self delegate] locationProviderDidUpdateAltitude];
-            }
-            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateAltitude)];
         }
         
         if (oldLocation.speed != newLocation.speed) {
             
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateSpeed)]) {
-                [[self delegate] locationProviderDidUpdateSpeed];
-            }
-            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateSpeed)];
         }
         
         if (oldLocation.course != newLocation.course) {
             
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateCourse)]) {
-                [[self delegate] locationProviderDidUpdateCourse];
-            }
-            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateCourse)];            
         }
         
         if (oldLocation.verticalAccuracy != newLocation.verticalAccuracy) {
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateVerticalAccuracy)]) {
-                [[self delegate] locationProviderDidUpdateVerticalAccuracy];
-            }
+            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateVerticalAccuracy)];
         }
         
         if (oldLocation.horizontalAccuracy != newLocation.horizontalAccuracy) {
-            if ([[self delegate] respondsToSelector:@selector(locationProviderDidUpdateHorizontalAccuracy)]) {
-                [[self delegate] locationProviderDidUpdateHorizontalAccuracy];
-            }
+            
+            [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateHorizontalAccuracy)];
         }
     }
 }
@@ -745,9 +803,7 @@
         self.currentHeading = newHeading;
         isHeadingValid = YES;
         
-        if ([self.delegate respondsToSelector:@selector(locationProviderDidUpdateHeading)]) {
-            [self.delegate performSelector:@selector(locationProviderDidUpdateHeading)];
-        }
+        [self notifyDelegateWithSelector:@selector(locationProviderDidUpdateHeading)];
         
     }
 }

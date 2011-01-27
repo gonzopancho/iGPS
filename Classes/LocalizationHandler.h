@@ -13,6 +13,8 @@
     
 
 }
+@property (retain) NSArray *appleLanguages;
+@property (nonatomic,retain) NSBundle *bundle;
 
 + (LocalizationHandler *)sharedHandler;
 - (NSString *)localizedString:(NSString *)key;

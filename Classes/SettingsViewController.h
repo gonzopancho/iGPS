@@ -10,22 +10,11 @@
 
 @class SettingsBundleReader;
 
-@protocol SettingsViewControllerDelegate;
-
 @interface SettingsViewController : UITableViewController {
 
 }
-
-@property (nonatomic, assign) id <SettingsViewControllerDelegate> delegate;
 @property (retain) SettingsBundleReader *reader;
 
 
-- (IBAction)done:(id)sender;
-
 @end
 
-
-@protocol SettingsViewControllerDelegate <NSObject>
-@required
-- (void)settingsViewControllerDidFinish;
-@end

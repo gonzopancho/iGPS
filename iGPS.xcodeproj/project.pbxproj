@@ -29,6 +29,10 @@
 		3BD77A5A12ECE9BC00653243 /* Scanner.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77A5812ECE9BC00653243 /* Scanner.png */; };
 		3BD77A5B12ECE9BC00653243 /* Tools.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77A5912ECE9BC00653243 /* Tools.png */; };
 		3BD77BB812ED8C0000653243 /* SettingsBundleReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */; };
+		3BD77D6E12EF58AC00653243 /* iGPSTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3BD77D6D12EF58AC00653243 /* iGPSTimer.m */; };
+		3BD77F6012F0523300653243 /* Scanner@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77F5F12F0523300653243 /* Scanner@2x.png */; };
+		3BD77F6212F0526400653243 /* Tools@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77F6112F0526400653243 /* Tools@2x.png */; };
+		3BD77FF012F0A41700653243 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 3BD77FEF12F0A41700653243 /* Default.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +70,11 @@
 		3BD77A5912ECE9BC00653243 /* Tools.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Tools.png; sourceTree = "<group>"; };
 		3BD77BB612ED8C0000653243 /* SettingsBundleReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsBundleReader.h; sourceTree = "<group>"; };
 		3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsBundleReader.m; sourceTree = "<group>"; };
+		3BD77D6C12EF58AC00653243 /* iGPSTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iGPSTimer.h; sourceTree = "<group>"; };
+		3BD77D6D12EF58AC00653243 /* iGPSTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iGPSTimer.m; sourceTree = "<group>"; };
+		3BD77F5F12F0523300653243 /* Scanner@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Scanner@2x.png"; sourceTree = "<group>"; };
+		3BD77F6112F0526400653243 /* Tools@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Tools@2x.png"; sourceTree = "<group>"; };
+		3BD77FEF12F0A41700653243 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* iGPS-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "iGPS-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -130,6 +139,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3BD77FEF12F0A41700653243 /* Default.png */,
+				3BD77F6112F0526400653243 /* Tools@2x.png */,
+				3BD77F5F12F0523300653243 /* Scanner@2x.png */,
 				3BD77A5812ECE9BC00653243 /* Scanner.png */,
 				3BD77A5912ECE9BC00653243 /* Tools.png */,
 				3B9B917212E75E9100B19A25 /* Settings.bundle */,
@@ -163,6 +175,8 @@
 				3B21E10612CBEBE8006D4C32 /* LocationProvider.m */,
 				3BD77BB612ED8C0000653243 /* SettingsBundleReader.h */,
 				3BD77BB712ED8C0000653243 /* SettingsBundleReader.m */,
+				3BD77D6C12EF58AC00653243 /* iGPSTimer.h */,
+				3BD77D6D12EF58AC00653243 /* iGPSTimer.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -248,6 +262,9 @@
 				3B9B917312E75E9100B19A25 /* Settings.bundle in Resources */,
 				3BD77A5A12ECE9BC00653243 /* Scanner.png in Resources */,
 				3BD77A5B12ECE9BC00653243 /* Tools.png in Resources */,
+				3BD77F6012F0523300653243 /* Scanner@2x.png in Resources */,
+				3BD77F6212F0526400653243 /* Tools@2x.png in Resources */,
+				3BD77FF012F0A41700653243 /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +285,7 @@
 				3B8C528812D8472400793C6F /* iGPSCustomTableViewCell.m in Sources */,
 				3B8C54D612DAECF400793C6F /* LocalizationHandler.m in Sources */,
 				3BD77BB812ED8C0000653243 /* SettingsBundleReader.m in Sources */,
+				3BD77D6E12EF58AC00653243 /* iGPSTimer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,28 +16,29 @@
 
 @implementation SettingsViewController
 
-
-@synthesize delegate;
 @synthesize reader;
 
 
 - (void)awakeFromNib {
+    
+    self.title =  NSLocalizedString(@"Settings",nil); 
     
     if (!self.reader) {
         self.reader = [[SettingsBundleReader alloc] init];
     }
     [self performSelector:@selector(setupData)];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshTable)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:nil];
+    
+    
+    
 }
 
 #pragma mark -
 #pragma mark View lifecycle
-
-
-- (IBAction)done:(id)sender {
-
-    [self.delegate settingsViewControllerDidFinish];	
-}
 
 
 - (void)setupData {
@@ -54,27 +55,39 @@
 }
     
 - (void)refreshTable {
+
     
-    dispatch_queue_t refreshQueue = dispatch_queue_create("iGPS.SettingsViewController.refreshQueue", NULL);
-    dispatch_async(refreshQueue, ^{
-        
-        @synchronized(self) {
-        
-            [self.reader loadDefaultValues];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tableView reloadData];
-            });
-        }
-        
-    });
-    dispatch_release(refreshQueue);
+    NSOperationQueue *queue = [[[NSOperationQueue alloc] init] autorelease];
+    NSInvocationOperation *operation = [[NSInvocationOperation alloc] initWithTarget:self.reader
+                                                                            selector:@selector(loadDefaultValues)
+                                                                              object:nil];
+    [queue addOperation:operation];
+    [operation release];
+
+    [self.tableView performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:YES];
     
 }
 
 
 - (void)viewWillAppear:(BOOL)animated {
     
-    self.title = NSLocalizedString(@"Settings",nil);
+        //    self.title = NSLocalizedString(@"Settings",nil);
+    
+        // NSArray *array = self.navigationController.viewControllers;
+        //    SettingsViewController *svc = [array objectAtIndex:0];
+        //    svc.title = NSLocalizedString(@"Settings",nil);
+    
+        //self.title =  NSLocalizedString(@"Settings",nil); 
+    /*
+    NSString *lang = [[LocalizationHandler sharedHandler].appleLanguages objectAtIndex:0];
+    
+    if ([lang isEqualToString:@"en"]) {
+        self.title = @"Settings";
+    } else self.title = @"Nastavenia";
+    */
+    
+    self.navigationItem.title = NSLocalizedString(@"Settings",nil);
+    
     [self refreshTable];
     [super viewWillAppear:animated];
     
@@ -144,8 +157,9 @@
 
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSDictionary *row = [[self.reader.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
+        // NSDictionary *row = [[self.reader.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];   
     
+    NSDictionary *row = [self.reader dataForIndexPath:indexPath];
              
     if ([[row objectForKey:@"Type"] isEqual:[NSString stringWithString:@"PSMultiValueSpecifier"]]) {
         
@@ -153,9 +167,7 @@
                                              initWithNibName:@"SettingsViewController"
                                              bundle:nil];
         dvc.data = row;
-        
-        
-        [dvc setTitle:NSLocalizedString([row objectForKey:@"Title"],nil)];
+
         [self.navigationController pushViewController:dvc animated:YES];
         [dvc release];
 
@@ -176,6 +188,7 @@
 
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [reader release];
     [super dealloc];
 }
