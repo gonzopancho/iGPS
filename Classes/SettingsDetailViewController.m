@@ -2,17 +2,19 @@
 //  SettingsDetailViewController.m
 //  iGPS
 //
-//  Created by Jakub Petrík on 12/31/10.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2010 Jakub Petrík. All rights reserved.
 //
 
 #import "SettingsDetailViewController.h"
 #import "SettingsViewController.h"
 #import "SettingsBundleReader.h"
+#import "Constants.h"
 
-
+//  Implementacia triedy
 @implementation SettingsDetailViewController
 
+//  Automaticky generovane metody accessorov
 @synthesize data;
 @synthesize keyForData;
 @synthesize selectedRow;
@@ -21,14 +23,18 @@
 #pragma mark -
 #pragma mark Initialization
 
+
+//  Nastavi nadpisi.
 - (void)makeTitles {
     
-    self.title = NSLocalizedString([self.data objectForKey:@"Title"],nil);
+    self.title = NSLocalizedString([self.data objectForKey:iGPSTitleKey],nil);
     self.navigationController.navigationBar.backItem.title = NSLocalizedString(@"Settings",nil);
     
 }
 
-
+//  Metóda v prípade, že sa líši práve vybraný riadok tabuľky od hodnoty pre kľúč atribútu
+//  keyForData slovníkového kontajnera prijatej notifikácie, uskutoční zmenu vybraného 
+//  riadku tabuľky rámca.
 - (void)reloadData:(NSNotification *)aNotification {
     
     NSNumber *number = [[[aNotification object] dictionaryRepresentation] objectForKey:self.keyForData];
@@ -43,7 +49,7 @@
 - (NSString *)keyForData {
     
     if (!keyForData) {
-        self.keyForData = [NSString stringWithString:[self.data objectForKey:@"Key"]];
+        self.keyForData = [NSString stringWithString:[self.data objectForKey:iGPSKey]];
     }
     
     return keyForData;
@@ -74,7 +80,7 @@
     
     @try {
         
-        NSString *keyPath = [self.data objectForKey:@"Title"];
+        NSString *keyPath = [self.data objectForKey:iGPSTitleKey];
         if ([keyPath isKindOfClass:[NSString class]]) {
             
             [[NSNotificationCenter defaultCenter] addObserver:self
@@ -98,14 +104,13 @@
     [self.tableView reloadData];
 }
 
+//  Metóda pošle správu s menom hodnoty atribútu keyForData a atribútu
+//  selectedRow ako objekt správy. Tiež zapíše do pamäte aktuálne zmenené nastavenia.
 - (void)sendNotification {
-    
+    NSLog(@"sendNotification for row %d",[self.selectedRow intValue]);
     [[NSUserDefaults standardUserDefaults] setObject:self.selectedRow forKey:self.keyForData];
     [[NSNotificationCenter defaultCenter] postNotificationName:self.keyForData object:self.selectedRow];
 
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
 }
 
 #pragma mark -
@@ -119,7 +124,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [[self.data objectForKey:@"Titles"] count];
+    return [[self.data objectForKey:iGPSTitlesKey] count];
 }
 
 
@@ -136,7 +141,7 @@
     // Configure the cell...
     
         
-    NSArray *labels = [self.data objectForKey:@"Titles"];
+    NSArray *labels = [self.data objectForKey:iGPSTitlesKey];
     
     cell.textLabel.text = NSLocalizedString([labels objectAtIndex:indexPath.row],nil);
     
@@ -152,22 +157,26 @@
 #pragma mark -
 #pragma mark Table view delegate
 
+//  Metoda ozanci bunku za vybratu a nastavi jej fajku ako accessory.
+//  Posle notifikaciu a ulozi nastavenie do pamate.
 - (void)tableView:(UITableView *)table didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.row != [self.selectedRow intValue]) {
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedRow intValue] inSection:0]];
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:[self.selectedRow intValue] 
+                                                                                         inSection:0]];
+        
         [cell setAccessoryType:UITableViewCellAccessoryNone];
         UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:indexPath];
         [newCell setAccessoryType:UITableViewCellAccessoryCheckmark];
         
-            //spinavy a hnusny trik za ktory zhorim v pekle... :)
+        
         [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionNone];
         
-        
         self.selectedRow = [NSNumber numberWithInt:indexPath.row];
+        [self sendNotification];
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self sendNotification];
+
     
 }
 
@@ -176,6 +185,7 @@
 #pragma mark Memory management
 
 - (void)releaseOutlets {
+    
     self.selectedRow = nil;
     self.keyForData = nil;
     self.data = nil;

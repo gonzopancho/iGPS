@@ -17,22 +17,23 @@
 #pragma mark -
 #pragma mark Application lifecycle
 
+/* Metoda testuje uzivatelske nastavenia podla priznakoveho kluca, ak je kluc nil, 
+ uzivatelske nastavenia budu zavedene a nastavene na vychodzie hodnoty. 
+ Dalej sa nastavi ramec aplikacie na ramec atributu tabBarController.
+*/
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions { 
     
     
     NSString *testValue = [[NSUserDefaults standardUserDefaults] stringForKey:kFirstNameKey];
     if (testValue == nil)
     {
-            // no default values have been set, create them here based on what's in our Settings bundle info
-            //
+
         NSString *pathStr = [[NSBundle mainBundle] bundlePath];
         NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
         NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
         
         NSDictionary *settingsDict  = [NSDictionary dictionaryWithContentsOfFile:finalPath];
         NSArray *prefSpecifierArray = [settingsDict objectForKey:@"PreferenceSpecifiers"];
-        
-            //NSLog(@"%@",[prefSpecifierArray description]);
         
         NSNumber *speedDefault    = [NSNumber numberWithInt:0];
         NSNumber *altitudeDefault = [NSNumber numberWithInt:0];
@@ -74,8 +75,7 @@
                 coordsDefault = defaultValue;
             }
         }
-        
-            // since no default values have been set (i.e. no preferences file created), create it here     
+           
         NSDictionary *appDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
                                      speedDefault, kSpeedKey,
                                      accuracyDefault, kAccuracyKey,
@@ -97,17 +97,8 @@
     return YES;
 }
 
-- (void)applicationWillEnterForeground:(UIApplication *)application {
-    
 
-    
-}
-
-- (void)applicationWillResignActive:(UIApplication *)application {
-    
-    
-}
-
+// Metoda uklada uzivatelske nastavenia z pamate na disk pri presune aplikacie do pozadia
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

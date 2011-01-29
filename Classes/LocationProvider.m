@@ -9,6 +9,35 @@
 #import "LocationProvider.h"
 #import "Constants.h"
 
+//  Prevody medzi jednotlivymi jednotkami
+#define M_TO_KM_RATIO 0.001
+#define M_TO_FEET_RATIO 3.28083
+#define M_TO_MILES_RATIO 0.000621371192
+#define MS_TO_KMH_RATIO 3.6
+#define MS_TO_MPH_RATIO 2.2369362920544
+#define MS_TO_KT_RATIO 1.9438612860586
+#define MS_TO_FPSEC_RATIO 3.28084
+
+
+//  Lokalizovane retazce
+#define kLSInvalid NSLocalizedString(@"Invalid",nil)
+
+#define kLSNorth NSLocalizedString(@"N",nil)
+#define kLSNorthEast NSLocalizedString(@"NE",nil)
+#define kLSNorthWest NSLocalizedString(@"NW",nil)
+#define kLSEast NSLocalizedString(@"E",nil)
+#define kLSSouth NSLocalizedString(@"S",nil)
+#define kLSSouthEast NSLocalizedString(@"SE",nil)
+#define kLSSouthWest NSLocalizedString(@"SW",nil)
+#define kLSWest NSLocalizedString(@"W",nil)
+
+#define kLSAboveSeaLevel NSLocalizedString(@"above sea level",nil)
+#define kLSBelowSeaLevel NSLocalizedString(@"below sea level",nil)
+
+#define kLSFoots NSLocalizedString(@"ft",nil)
+#define kLSMiles NSLocalizedString(@"miles",nil)
+
+//  Sukromne atributy a metody
 @interface LocationProvider ()
 
 @property (nonatomic, retain) CLLocationManager *locationManager;
@@ -19,8 +48,11 @@
 @end
 
 
+
+//  Implementacia triedy
 @implementation LocationProvider
 
+//  Automaticky generovane metod accessorov
 @synthesize locationManager;
 @synthesize userDefaultsValues;
 @synthesize currentHeading;
@@ -34,6 +66,8 @@
 
 - (void)setupUserDefaultsValues {
     
+    
+    //nacitanie hodnot
     NSNumber *speed    = [[NSUserDefaults standardUserDefaults] objectForKey:kSpeedKey];
     NSNumber *accuracy = [[NSUserDefaults standardUserDefaults] objectForKey:kAccuracyKey];
     NSNumber *accUnits = [[NSUserDefaults standardUserDefaults] objectForKey:kAccUnitsKey];
@@ -43,6 +77,7 @@
     NSNumber *course   = [[NSUserDefaults standardUserDefaults] objectForKey:kCourseKey];
     NSNumber *coords   = [[NSUserDefaults standardUserDefaults] objectForKey:kCoordsKey];
     
+    //vytvorenie slovnika a priradenie atributu userDefaultsValue
     self.userDefaultsValues = [NSDictionary dictionaryWithObjectsAndKeys:
                                speed,kSpeedKey,
                                accuracy,kAccuracyKey,
@@ -54,8 +89,10 @@
                                coords,kCoordsKey,nil];
 }
 
+//  Metoda prostrednictom predaneho selektoru uskutocni metodu predanu ako hodnotu selektora
 - (void)notifyDelegateWithSelector:(SEL)aSelector {
     
+    //  ak rozumnie delegat metode, metoda sa vykona
     if ([[self delegate] respondsToSelector:aSelector]) {
         [[self delegate] performSelector:aSelector];
     }
@@ -63,9 +100,12 @@
 
 - (void)defaultsChanged:(NSNotification *)aNotification {
     
-    
+    //  slovnikova reprezentacia objektu spravy - uzivatelkskym nastaveniam
     NSDictionary *dict = [[aNotification object] dictionaryRepresentation];
     
+    
+    //  skontroluje hodnoty pre pre dane kluce.
+    //  pri zisteni zmeny aktualizuje userDefaultsValues a upozorni delegata o vykonanej zmene
     if (![[dict objectForKey:kSpeedKey] isEqualToNumber:[self.userDefaultsValues objectForKey:kSpeedKey]]) {
         
         [self updateDefaults:[NSNotification notificationWithName:kSpeedKey object:[dict objectForKey:kSpeedKey]]];
@@ -117,18 +157,22 @@
     
 }
 
+//  Metoda nastavi KVO
 - (void)setupKeyValueObserverving {
     
+    //  Na zmenu presnosti
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(accuracyChanged:)
                                                  name:kAccuracyKey
                                                object:nil];
     
+    //  Na zmenu filtra vzdialenosti
     [[NSNotificationCenter defaultCenter] addObserver:self 
                                              selector:@selector(distanceFilterChanged:) 
                                                  name:kDistanceKey
                                                object:nil];
     
+    //  Na ostatne zmeny v nastaveniach
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(defaultsChanged:)
                                                  name:NSUserDefaultsDidChangeNotification
@@ -136,7 +180,7 @@
     
 }
 
-
+//  Konstruktor.
 - (id)init {
     
     if ((self = [super init])) {
@@ -149,24 +193,31 @@
     return self;
 }
 
+//  Metoda nastavi location managera.
 - (void)setupLocationManager {
     
     if (!self.locationManager) {
         self.locationManager = [[CLLocationManager alloc] init];
     }
+    
+    // urci delegata
     self.locationManager.delegate = self;
     
+    // nastav presnost podla hodnoty userDefaultsValues
     [self setAccuracy:[self.userDefaultsValues objectForKey:kAccuracyKey]];
+    
+    // nastav filter vzdialenosti podla hodnoty userDefaultsValues
     [self setDistanceFilter:[self.userDefaultsValues objectForKey:kDistanceKey]];
 }
 
 
-
+// Metoda vracia BOOL YES ak je cislo vacsie ako 0, inak BOOL NO.
 - (BOOL)isDoubleValid:(double)value {
     
     return (value >= 0);
 }
 
+// Metoda prevedie cislo na stupne, minuty a sekundy a vrati ho ako retazec
 - (NSString *)degreeStringFromDecimal:(float)number {
     
     int degrees = number;
@@ -182,6 +233,8 @@
 #pragma mark -
 #pragma mark LocationProvider life cycle
 
+
+//  Aktualizuje slovnik userDefaultsValues
 - (void)updateDefaults:(NSNotification *)aNotification {
     
     NSMutableDictionary * newDefaults = [NSMutableDictionary dictionary];
@@ -198,6 +251,7 @@
     
 }
 
+//  Nastavi novozvolenu pozadovanu presnost pomocou notifikacie predanej ako argument.
 - (void)accuracyChanged:(NSNotification *)aNotification {
     
     [self setAccuracy:[aNotification object]];
@@ -205,6 +259,7 @@
 
 }
 
+//  Nastavi novozvoleny filter vzdialenosti pomocou notifikacie predanej ako argument.
 - (void)distanceFilterChanged:(NSNotification *)aNotification {
     
     [self setDistanceFilter:[aNotification object]];
@@ -212,7 +267,7 @@
     
 }
 
-
+// Podla novej hodnoty nastavi pozadovanu presnost atributu locationManager.
 - (void)setAccuracy:(id)newAccuracy {
     
     if ([newAccuracy isKindOfClass:[NSNumber class]]) {
@@ -245,7 +300,7 @@
             
 }
 
-
+// Podla novej hodnoty nastavi filter vzdialenosti atributu locationManager.
 - (void)setDistanceFilter:(id)newFilter {
     
     if ([newFilter isKindOfClass:[NSNumber class]]) {
@@ -343,15 +398,24 @@
 
 - (NSString *)convertLatitudeToDMS:(float)latitude {
     
-    if (latitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:latitude * -1.],NSLocalizedString(@"S",@"Juh")];
-    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:latitude],NSLocalizedString(@"N",@"Sever")];
+    if (latitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:fabs(latitude)],kLSSouth];
+    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:latitude],kLSNorth];
 }
 
 - (NSString *)latitudeInDegDec {
+    
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        return kLSInvalid; 
+    }
     return [NSString stringWithFormat:@"%f˚",self.locationManager.location.coordinate.latitude];
 }
 
 - (NSString *)latitudeInDMS {
+    
+    if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
+        return kLSInvalid;
+    }
+    
     return [NSString stringWithFormat:@"%@",[self convertLatitudeToDMS:self.locationManager.location.coordinate.latitude]];   
 }
 
@@ -369,8 +433,8 @@
 
 - (NSString *)convertLongitudeToDMS:(float)longitude {
     
-    if (longitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:longitude * -1.],NSLocalizedString(@"W",@"Západ")];
-    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:longitude],NSLocalizedString(@"E",@"Východ")];    
+    if (longitude < 0) return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:fabs(longitude)],kLSWest];
+    return [NSString stringWithFormat:@"%@ %@",[self degreeStringFromDecimal:longitude],kLSEast];    
 }
 
 - (NSString *)longitudeInDegDec {
@@ -393,24 +457,89 @@
 
     //Altitude
 
+- (int)altitudeBelowSeaLevel:(double)altitude {
+    
+    if (altitude < 0) {
+        return -1;
+    }
+    if (altitude > 0) {
+        return 1;
+    }
+    return 0;
+    
+}
+
 - (NSString *)altitudeInMetres {
-    return [NSString stringWithFormat:@"%.3f m",self.locationManager.location.altitude];
+    
+    double altitude = self.locationManager.location.altitude;
+    
+    switch ([self altitudeBelowSeaLevel:self.locationManager.location.altitude]) {
+        case 1:
+            return [NSString stringWithFormat:@"%.3f m %@",altitude,kLSAboveSeaLevel];
+            break;
+        case -1:
+            return [NSString stringWithFormat:@"%.3f m %@",fabs(altitude),kLSBelowSeaLevel];
+            break;
+        default:
+            return kLSInvalid;
+            break;
+    }
+
 }
 
 - (NSString *)altitudeInKilometres {
-    return [NSString stringWithFormat:@"%.3f km",self.locationManager.location.altitude * 0.001];
+    
+    double altitude = self.locationManager.location.altitude;
+    
+    switch ([self altitudeBelowSeaLevel:altitude]) {
+        case 1:
+            return [NSString stringWithFormat:@"%.3f km %@",altitude * M_TO_KM_RATIO,kLSAboveSeaLevel];
+            break;
+        case -1:
+            return [NSString stringWithFormat:@"%.3f km %@",fabs(altitude) * M_TO_KM_RATIO,kLSBelowSeaLevel];
+            break;
+        default:
+            return kLSInvalid;
+            break;
+    }
+    
+    return [NSString stringWithFormat:@"%.3f km",self.locationManager.location.altitude * M_TO_KM_RATIO];
 }
 
 - (NSString *)altitudeInFeet {
-    return [NSString stringWithFormat:@"%.3f %@",
-            self.locationManager.location.altitude * 3.28083, 
-            NSLocalizedString(@"ft",nil)];    
+    
+    double altitude = self.locationManager.location.altitude;
+    
+    switch ([self altitudeBelowSeaLevel:altitude]) {
+        case 1:
+            return [NSString stringWithFormat:@"%.3f %@ %@",altitude * M_TO_FEET_RATIO,kLSFoots,kLSAboveSeaLevel]; 
+            break;
+        case -1:
+            return [NSString stringWithFormat:@"%.3f %@ %@",fabs(altitude) * M_TO_FEET_RATIO,kLSFoots,kLSBelowSeaLevel]; 
+            break;
+        default:
+            return kLSInvalid;
+            break;
+    }
+    
 }
 
 - (NSString *)altitudeInMiles {
-    return [NSString stringWithFormat:@"%.4f %@",
-            self.locationManager.location.altitude * 0.000621371192,
-            NSLocalizedString(@"miles",nil)]; 
+    
+    double altitude = self.locationManager.location.altitude;
+    
+    switch ([self altitudeBelowSeaLevel:altitude]) {
+        case 1:
+            return [NSString stringWithFormat:@"%.4f %@ %@",altitude * M_TO_MILES_RATIO,kLSMiles,kLSAboveSeaLevel];
+            break;
+        case -1:
+            return [NSString stringWithFormat:@"%.4f %@ %@",fabs(altitude) * M_TO_MILES_RATIO,kLSMiles,kLSBelowSeaLevel];
+            break;
+        default:
+            return kLSInvalid;
+            break;
+    }
+    
 }
 
 - (NSString *)altitudeByUserDefaults {
@@ -441,32 +570,33 @@
 
 - (NSString *)speedInMetresPerSecond {
    
-    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+    if (![self isDoubleValid:self.locationManager.location.speed]) return kLSInvalid;
     return [NSString stringWithFormat:@"%.2f m/s",self.locationManager.location.speed];
 }
 
 - (NSString *)speedInKilometersPerHour {
     
-    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    return [NSString stringWithFormat:@"%.2f km/h",self.locationManager.location.speed * 3.6];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return kLSInvalid;
+    return [NSString stringWithFormat:@"%.2f km/h",self.locationManager.location.speed * MS_TO_KMH_RATIO];
 }
 
 - (NSString *)speedInMilesPerHour {
     
-    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    return [NSString stringWithFormat:@"%.2f mph",self.locationManager.location.speed * 2.24];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return kLSInvalid;
+    return [NSString stringWithFormat:@"%.2f mph",self.locationManager.location.speed * MS_TO_MPH_RATIO];
 }
 
 - (NSString *)speedInKnots {
     
-    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    return [NSString stringWithFormat:@"%.2f %@",self.locationManager.location.speed * 1.94,NSLocalizedString(@"knots",nil)];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return kLSInvalid;
+    return [NSString stringWithFormat:@"%.2f %@",self.locationManager.location.speed * MS_TO_KT_RATIO,
+            NSLocalizedString(@"knots",nil)];
 }
 
 - (NSString *)speedInFeetPerSecond {
     
-    if (![self isDoubleValid:self.locationManager.location.speed]) return NSLocalizedString(@"Updating...",@"Aktualizujem...");
-    return [NSString stringWithFormat:@"%.2f ft/s",self.locationManager.location.speed * 3.28];
+    if (![self isDoubleValid:self.locationManager.location.speed]) return kLSInvalid;
+    return [NSString stringWithFormat:@"%.2f ft/s",self.locationManager.location.speed * MS_TO_FPSEC_RATIO];
 }
 
 - (NSString *)speedByUserDefaults {
@@ -529,39 +659,37 @@
 
 - (NSString *)stringFromDegrees:(double)degrees {
 
-    NSString *stringToReturn;
     double degreesValue = degrees;
     
     switch ([self orientationFromDegrees:degreesValue]) {
         case 1:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"N",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSNorth];
             break;
         case 2:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"NE",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSNorthEast];
             break;
         case 3:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"E",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSEast];
             break;
         case 4:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"SE",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSSouthEast];
             break;
         case 5:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"S",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSSouth];
             break;
         case 6:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"SW",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSSouthWest];
             break;
         case 7:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"W",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSWest];
             break;
         case 8:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,NSLocalizedString(@"NW",nil)];
+            return [NSString stringWithFormat:@"%.1f˚ %@",degreesValue,kLSNorthWest];
             break;
         default:
-            stringToReturn = [NSString stringWithFormat:@"%.1f˚",degreesValue];
+            return [NSString stringWithFormat:@"%.1f˚",degreesValue];
             break;
     }
-    return stringToReturn;
     
 }
 
@@ -590,22 +718,20 @@
 - (NSString *)courseInDegrees {
     
     if ([self isDoubleValid:self.locationManager.location.course]) {
+        
         return [NSString stringWithFormat:@"%.1f˚",self.locationManager.location.course];
-    } else return [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
+    }
+    return kLSInvalid;
     
 }
 
 - (NSString *)courseMixed {
     
     double courseDegrees = self.locationManager.location.course;
-    NSString *stringToReturn;
     
-    if ([self isDoubleValid:courseDegrees]) {
-        
-        stringToReturn = [self stringFromDegrees:courseDegrees];
-    } else stringToReturn = [NSString stringWithString:NSLocalizedString(@"Updating...",@"Aktualizujem...")];
+    if ([self isDoubleValid:courseDegrees]) return [self stringFromDegrees:courseDegrees];
     
-    return stringToReturn;
+    return kLSInvalid;
 }
 
 - (NSString *)courseByUserDefaults {
@@ -624,7 +750,7 @@
     
     if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.verticalAccuracy];
 }
@@ -634,9 +760,9 @@
 
     if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
-    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.verticalAccuracy * 0.001];
+    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.verticalAccuracy * M_TO_KM_RATIO];
 }
 
 
@@ -644,11 +770,11 @@
     
     if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.2f %@",
-            self.locationManager.location.verticalAccuracy * 3.28083,
-            NSLocalizedString(@"ft",nil)];
+            self.locationManager.location.verticalAccuracy * M_TO_FEET_RATIO,
+            kLSFoots];
 }
 
 
@@ -656,11 +782,11 @@
     
     if (![self isDoubleValid:self.locationManager.location.verticalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.4f %@",
-            self.locationManager.location.verticalAccuracy * 0.000621371192,
-            NSLocalizedString(@"miles",nil)];
+            self.locationManager.location.verticalAccuracy * M_TO_MILES_RATIO,
+            kLSMiles];
 }
 
 - (NSString *)veritcalAccuracyByUserDefaults {
@@ -691,7 +817,7 @@
     
     if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.2f m",self.locationManager.location.horizontalAccuracy];
 }
@@ -700,31 +826,31 @@
 
     if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
-    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.horizontalAccuracy * 0.001];
+    return [NSString stringWithFormat:@"%.3f Km",self.locationManager.location.horizontalAccuracy * M_TO_KM_RATIO];
 }
 
 - (NSString *)horizontalAccuracyInFeet {
     
     if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.2f %@",
-            self.locationManager.location.horizontalAccuracy * 3.28083,
-            NSLocalizedString(@"ft",nil)];
+            self.locationManager.location.horizontalAccuracy * M_TO_FEET_RATIO,
+            kLSFoots];
 }
 
 - (NSString *)horizontalAccuracyInMiles {
     
     if (![self isDoubleValid:self.locationManager.location.horizontalAccuracy]) {
         
-        return NSLocalizedString(@"Updating...",@"Aktualizujem...");
+        return kLSInvalid;
     }
     return [NSString stringWithFormat:@"%.4f %@",
-            self.locationManager.location.horizontalAccuracy * 0.000621371192,
-            NSLocalizedString(@"miles",nil)];
+            self.locationManager.location.horizontalAccuracy * M_TO_MILES_RATIO,
+            kLSMiles];
 }
 
 - (NSString *)horizontalAccuracyByUserDefaults {
@@ -826,6 +952,7 @@
 #pragma mark MemoryManagement
 
 - (void)dealloc {
+    
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [locationManager release];
     [delegate release];

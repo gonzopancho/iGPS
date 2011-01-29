@@ -2,12 +2,12 @@
 //  iGPSTimer.m
 //  iGPS
 //
-//  Created by Jakub Petrík on 1/25/11.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2011 Jakub Petrík. All rights reserved.
 //
 
 #import "iGPSTimer.h"
-
+#import "Constants.h"
 
 @implementation iGPSTimer
 
@@ -15,7 +15,21 @@
 @synthesize startInterval;
 @synthesize stopInterval;
 
+//  metoda posle notifikaciu ktorej meno je hodonota konstany
+//  kElapsedTime a objekt je pocet sekund od spustenia casomiery
+- (void)sendElapsedTimeNotification {
+    
+    self.startInterval = [NSDate timeIntervalSinceReferenceDate];
+    
+    NSNumber *elapsedTime = [NSNumber numberWithDouble:self.startInterval - self.stopInterval];
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:kElapsedTimeKey 
+                                                        object:elapsedTime];
+}
 
+//  Metoda zacne merat cas a nastavi instanciu na posielanie 
+//  sprav s menon “elapsedTime” a objektom NSNumber reprezentujucim 
+//  cas od volania tejto metody.
 - (void)start {
     
     NSTimeInterval interval = [NSDate timeIntervalSinceReferenceDate];
@@ -35,6 +49,7 @@
         
 }
 
+//  zastavi posielanie sprav
 - (void)stop {
     
     [self.scheduler invalidate];
@@ -42,17 +57,7 @@
 }
 
 
-- (void)sendElapsedTimeNotification {
-    
-    self.startInterval = [NSDate timeIntervalSinceReferenceDate];
-    
-    NSNumber *elapsedTime = [NSNumber numberWithDouble:self.startInterval - self.stopInterval];
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"elapsedTime" 
-                                                        object:elapsedTime];
-    
-}
-
+//  destruktor
 - (void)dealloc {
 
     [scheduler release];

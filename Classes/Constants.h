@@ -2,20 +2,32 @@
 //  Constants.h
 //  iGPS
 //
-//  Created by Jakub Petrík on 1/1/11.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2011 Jakub Petrík. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 
+#define kNorthKey @"north"
+#define kDistanceKey @"distance"
+#define kAccuracyKey @"accuracy"
+#define kAccUnitsKey @"accUnits"
+#define kSpeedKey @"speed"
+#define kAltitudeKey @"alt"
+#define kCourseKey @"course"
+#define kFirstNameKey @"firstNameKey"
+#define kCoordsKey @"coords"
 
-extern NSString * const kNorthKey;
-extern NSString * const kDistanceKey;
-extern NSString * const kAccuracyKey;
-extern NSString * const kAccUnitsKey;
-extern NSString * const kSpeedKey;
-extern NSString * const kAltitudeKey;
-extern NSString * const kCourseKey;
-extern NSString * const kFirstNameKey;
-extern NSString * const kCoordsKey;
+#define kAppleLanguages @"AppleLanguages"
+#define kElapsedTimeKey @"elapsedTime"
+
+#define iGPSSettingsBundle @"Settings.bundle"
+#define iGPSRootPlist @"Root.plist"
+#define iGPSPrefernceSpecifiersKey @"PreferenceSpecifiers"
+#define iGPSTitlesKey @"Titles"
+#define iGPSTitleKey @"Title"
+#define iGPSKey @"Key"
+
+
+
 

@@ -2,13 +2,12 @@
 //  LocalizationHandler.m
 //  CoreLocationUkazka
 //
-//  Created by Jakub Petrík on 1/10/11.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2011 Jakub Petrík. All rights reserved.
 //
 
 #import "LocalizationHandler.h"
-
-
+#import "Constants.h"
 
 @implementation LocalizationHandler
 
@@ -20,25 +19,33 @@ static LocalizationHandler *sharedLocalizator = nil;
 - (id)init {
     
     if ((self = [super init])) {
+        
+        //  Nastav KVO
         [self setupKeyValueObserverving];
     }
     return self;
 }
 
+
+//  Navratova metoda pre accessor bundle.
 - (NSBundle *)bundle {
     
-    if (bundle == nil) {
+    // Ak je bundle nil, nastav ho.
+    if (!bundle) {
         [self setupBundle];
     }
     
     return bundle;
 }
 
+
+// Metoda volana pri obdrzani sparvy o vykonanej zmene v uzivatelskych nastaveniach.
 - (void)defaultsChanged:(NSNotification *)aNotification {
     
-    if (![sharedLocalizator.appleLanguages isEqualToArray:[[[aNotification object] dictionaryRepresentation] objectForKey:@"AppleLanguages"]]) {
+    //  Ak sa zmenilo pole jazykov aktualizuj pole appleLanguages a nastav bundle
+    if (![sharedLocalizator.appleLanguages isEqualToArray:[[[aNotification object] dictionaryRepresentation] objectForKey:kAppleLanguages]]) {
         
-        sharedLocalizator.appleLanguages = [[[aNotification object] dictionaryRepresentation] objectForKey:@"AppleLanguages"];
+        sharedLocalizator.appleLanguages = [[[aNotification object] dictionaryRepresentation] objectForKey:kAppleLanguages];
         
         [self setupBundle];
         NSLog(@"LocalizationHandler defaultsChanged" );
@@ -47,6 +54,7 @@ static LocalizationHandler *sharedLocalizator = nil;
     
 }
 
+//  Nastav KVO.
 - (void)setupKeyValueObserverving {
     
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
@@ -59,18 +67,17 @@ static LocalizationHandler *sharedLocalizator = nil;
 
 
 
+//  Nastav bundle
 - (void)setupBundle {
             
-    NSArray *languages = [[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"];    
+    NSArray *languages = [[NSUserDefaults standardUserDefaults] objectForKey:kAppleLanguages];    
     NSString *language = [languages objectAtIndex:0];
-    
-    if ([language isEqualToString:@"en"]) language = @"English";
     
     NSString *bundlePath = [[NSBundle mainBundle] pathForResource:[NSString stringWithFormat:@"%@",language] ofType:@"lproj"];
     sharedLocalizator.bundle = [NSBundle bundleWithPath:bundlePath];
 }
 
-
+//  Triedna metóda zaisťujúca prístup k singletom inštancií.
 + (LocalizationHandler *)sharedHandler {
     @synchronized(self) {
         if (sharedLocalizator == nil) {
@@ -80,15 +87,20 @@ static LocalizationHandler *sharedLocalizator = nil;
     return sharedLocalizator;
 }
 
+//  Metoda lokalizuje retaz podla kluca predaneho ako argument
 - (NSString *)localizedString:(NSString *)key {
     
     NSString *value = [sharedLocalizator.bundle localizedStringForKey:key value:nil table:nil];
     
+    //  V pripade neuspechu ziskania lokalizovaneho retazca v nastavenom baliku zdrojov, vrati povodny.
     if (value) return value;
     return [[NSBundle mainBundle] localizedStringForKey:key value:key table:nil];
 }
 
+// Triedna metoda alokacie podla predanej pamatovej zony  
 + (id)allocWithZone:(NSZone *)zone {
+    
+    //  mutex
     @synchronized(self) {
         if (sharedLocalizator == nil) {
             sharedLocalizator = [super allocWithZone:zone];
@@ -110,12 +122,12 @@ static LocalizationHandler *sharedLocalizator = nil;
 
 - (unsigned)retainCount {
     
-    return UINT_MAX;  //denotes an object that cannot be released
+    return UINT_MAX;  //naznacuje ze objekt nemoze byt uvolneny
 }
 
 - (void)release {
     
-        //do nothing
+        //nerob nic, objekt nemoze byt uvolneny
 }
 
 - (id)autorelease {

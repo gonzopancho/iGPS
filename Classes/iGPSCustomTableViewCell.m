@@ -2,7 +2,7 @@
 //  iGPSCustomTableViewCell.m
 //  iGPS
 //
-//  Created by Jakub Petrík on 1/8/11.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2011 Jakub Petrík. All rights reserved.
 //
 
@@ -14,6 +14,7 @@
 @synthesize mainText;
 @synthesize detailText;
 
+//  Konstruktor
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -23,24 +24,24 @@
     return self;
 }
 
-
+//  Metoda nastavi bunku ako ozancenu.
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     
     [super setSelected:selected animated:animated];
     
-    // Configure the view for the selected state.
 }
 
+//  Nastavy hlavny text bunky na text predany ako argument.
 - (void)setMainTextLabel:(NSString *)newMainText {
     self.mainText.text = newMainText;
 }
 
-
+//  Nastavy vedajsi text bunky na text predany ako argument.
 - (void)setDetailTextLabel:(NSString *)newDetailText {
     self.detailText.text = newDetailText;
 }
 
-
+//  Destruktor
 - (void)dealloc {
     [mainText release];
     [detailText release];

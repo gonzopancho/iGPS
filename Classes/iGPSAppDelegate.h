@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+
+//trieda je delegatom aplikacie
 @interface iGPSAppDelegate : NSObject <UIApplicationDelegate> {
     
     UIWindow *window;

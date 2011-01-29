@@ -13,37 +13,45 @@
 #import "iGPSTimer.h"
 #import <dispatch/dispatch.h>
 
+
+//  Sukromne atributy a metody.
 @interface RootViewController ()
 
+//  Casovac.
 @property (nonatomic, retain) iGPSTimer *timer;
 
+//  Aktualizuje pole values.
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index;
-- (void)makeTitles;
+
+//  Nastavy nadpis ramca SettingsView v jeho navigation controllery.
+- (void)makeSVCTitle;
 
 @end
 
 
-
+//  Implementacia triedy
 @implementation RootViewController
 
+//  Automaticky generovane metody accessorov
 @synthesize locationProvider;
 @synthesize names;
 @synthesize values;
-
 @synthesize timer;
 
 #pragma mark -
 #pragma mark View lifecycle
 
+//  Nastavi KVO.
 - (void)setupKeyValueObserving {
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateElapsedTimeSinceLastLocationUpdate:)
-                                                 name:@"elapsedTime"
+                                                 name:kElapsedTimeKey
                                                object:nil];
     
 }
 
+//  Vytvori tlacidlo pre zmenu jazyka a naviaze nan prislusnu akciu.
 - (void)setupNavigationItems {
     
     UIBarButtonItem *item = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"Slovensky",nil)
@@ -56,33 +64,34 @@
     
 }
 
-
+//  Metóda volaná po načítaní rámca triedy do pamäte. Používaná na ďalšiu inicializáciu.
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setupKeyValueObserving];
     
     NSLog(@"ViewDidLoad");
-            
+    
+    //  Inicializacia locationProvidera
     if (!self.locationProvider) {
         self.locationProvider = [[LocationProvider alloc] init];
     }
     [self.locationProvider setDelegate:self];
     [self.locationProvider startUpdatingLocationAndHeading];
     
+    //  Inicializacia casovaca timer
     if (!self.timer) {
         self.timer = [[iGPSTimer alloc] init];
     }
     [self.timer start];
     
     [self setTitle:@"iGPS"];
-    [self makeTitles];
+    [self makeSVCTitle];
     [self setupNavigationItems];
     
-    
-
 }
 
-- (void)makeTitles {
+//  Nastavy nadpis ramca SettingsView v jeho navigation controllery.
+- (void)makeSVCTitle {
     
     NSArray *array = self.tabBarController.viewControllers;
     
@@ -94,59 +103,46 @@
     
 }
 
-
-- (void)updateAllRows {
-    
-    [self locationProviderDidUpdateAltitude];
-    [self locationProviderDidUpdateCourse];
-    [self locationProviderDidUpdateHeading];
-    [self locationProviderDidUpdateHorizontalAccuracy];
-    [self locationProviderDidUpdateLatitude];
-    [self locationProviderDidUpdateLatitude];
-    [self locationProviderDidUpdateLongitude];
-    [self locationProviderDidUpdateSpeed];
-    [self locationProviderDidUpdateVerticalAccuracy];
-    
-}
-
-
+//  Metóda zmení nultý prvok v poli “AppleLanguages”, následne znovu načíta všetky viditeľné reťazce.
 - (IBAction)changeLanguage:(id)sender {
     
-    NSMutableArray *languages = [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] mutableCopy];
+    NSMutableArray *languages = [[[NSUserDefaults standardUserDefaults] objectForKey:kAppleLanguages] mutableCopy];
     
     id element = [languages objectAtIndex:0];
     
-
     
     if ([element isKindOfClass:[NSString class]]) {
         NSString *lang = (NSString *)element;
         
-        if ([lang isEqual:@"en"]) {
-            lang = @"sk";
-        } else lang = @"en";
+        lang = ([lang isEqual:@"en"]) ? @"sk" : @"en";
         
         [languages replaceObjectAtIndex:0 withObject:lang];
-        [[NSUserDefaults standardUserDefaults] setObject:languages forKey:@"AppleLanguages"];
+        [[NSUserDefaults standardUserDefaults] setObject:languages forKey:kAppleLanguages];
         
-        [self makeTitles];
+        [self makeSVCTitle];
         [self setupNavigationItems];
         [self viewWillAppear:NO];
     }
-    
     
     [languages release];
     
 }
 
-- (void)settingsViewControllerDidFinish {
-    [self dismissModalViewControllerAnimated:YES];
-}
-
+//  Metóda prostredníctvom správy štart poslanej atribútu timer typu iGPSTimer 
+//  zabezpečí poslanie notifikácie o uplynulom časovom intervale medzi jednotlivými 
+//  aktualizáciami polohy.
 - (void)locationProviderDidUpdateLocation {
     
     [self.timer start];
      
 }
+
+
+//  Metóda je vždy volaná z vedľajšieho vlákna. Získa pointer bunky tabuľky 
+//  prostredníctvom predaného objektu triedy NSIndexPath, novú hodnotu hlavného
+//  reťazca bunky vykonaním selektora predaného ako posledný argument a v hlavnom
+//  vlákne ju nastavý ako hodntou hlavného reťazca bunky. Následne znova vo
+//  vedľajšom vlákne úpravy hodnotu prvku atributu values podľa predného objektu indexPath.
 
 - (void)updateCellForIndexPath:(NSIndexPath *)indexPath withSelector:(SEL)aSelector {
     
@@ -160,17 +156,17 @@
     [self setStringValue:label atIndex:indexPath];
 }
 
-
+//  Metóda ako všetky nepovinné metódy protokolu LocationProviderDelegate získa 
+//  v hlavnom vlákne objekt indexPath pomocou správy indexPathForRow: inSection: 
+//  a vo vedľajšom vlákne pomocou predchádzajúcej metódy nastaví konkrétnu bunku tabuľky rámca.
 - (void)locationProviderDidUpdateHeading {    
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Heading",nil)] 
                                                 inSection:0];
 
-    
     dispatch_queue_t headingQueue = dispatch_queue_create("iGPS.HeadingQueue", NULL);
     dispatch_async(headingQueue, ^{
         
-                
         [self updateCellForIndexPath:indexPath withSelector:@selector(headingByUserDefaults)];
     });
     
@@ -179,6 +175,7 @@
     
 }
 
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateLatitude {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Latitude",nil)]
@@ -195,7 +192,7 @@
     
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateLongitude {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Longitude",nil)]
@@ -212,7 +209,7 @@
         
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateAltitude {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Altitude",nil)]
@@ -229,7 +226,7 @@
     
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateSpeed {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Speed",nil)]
@@ -245,7 +242,7 @@
     dispatch_release(speedQueue); 
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateCourse {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Course",nil)]
@@ -262,7 +259,7 @@
     
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateVerticalAccuracy {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Vertical accuracy",nil)] 
@@ -278,7 +275,7 @@
     dispatch_release(verticalAccQueue); 
 }
 
-
+//  ako locationProviderDidUpdateHeading
 - (void)locationProviderDidUpdateHorizontalAccuracy {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Horizontal accuracy",nil)] 
@@ -293,7 +290,8 @@
     dispatch_release(horizontalAccQueue); 
 }
 
-
+//  Metóda príjma správy o uplynutí časového intervalu medzi jednotlivými 
+//  aktualizáciami polohy, následne tento nový údaj nastavý zodpovedajúcemu riadku tabuľky.
 - (void)updateElapsedTimeSinceLastLocationUpdate:(NSNotification *)aNotification {
     
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[self.names indexOfObjectIdenticalTo:NSLocalizedString(@"Last update",nil)]
@@ -321,7 +319,7 @@
     
 }
 
-
+//  Aktualizuje pole values.
 - (void)setStringValue:(NSString *)value atIndex:(NSIndexPath *)index {
     
     if ([self.values count] > index.row) {
@@ -330,7 +328,7 @@
     
 }
 
-
+// inicializuje pole values na vychodzie hodnoty
 - (void)setupValues {
     
     NSString *lastUpdate;
@@ -383,6 +381,7 @@
     
 }
 
+//  Inicializuje pole names na vychodzie hodnoty.
 - (void)setupNames {
     
     self.names = [NSArray arrayWithObjects:
@@ -398,19 +397,17 @@
     
 }
 
+//  nastavy polia values a names znovunacita data do tabulky
 - (void)loadData {
-    
-        
     
     [self setupValues];
     [self setupNames];
     
     [self.tableView reloadData]; 
-                                 
     
 }
 
-
+//  nastavi polia values a names a data tabulky
 - (void)viewWillAppear:(BOOL)animated {
 
     
@@ -457,8 +454,6 @@
         }
     }
     
-    
-    
     [cell setMainTextLabel:[self.values objectAtIndex:indexPath.row]];
     [cell setDetailTextLabel:[self.names objectAtIndex:indexPath.row]];	
 
@@ -480,6 +475,8 @@
 #pragma mark -
 #pragma mark Memory management
 
+
+//  Pomocna metoda na uvolnovanie zdrojov.
 - (void)releaseOutlets {
     
     self.names = nil;
@@ -489,17 +486,19 @@
     
 }
 
+
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
 }
 
+//  Metoda volana ked sa ramec uvolni z pamate
 - (void)viewDidUnload {  
     [self.locationProvider stopUpdatingLocationAndHeading];
     [self releaseOutlets];
 }
 
-
+//  Destruktor.
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self releaseOutlets];

@@ -2,11 +2,13 @@
 //  SettingsBundleReader.m
 //  iGPS
 //
-//  Created by Jakub Petrík on 1/24/11.
+//  Created by Jakub Petrík on 12/29/10.
 //  Copyright 2011 Jakub Petrík. All rights reserved.
 //
 
 #import "SettingsBundleReader.h"
+#import "Constants.h"
+
 
 
 @implementation SettingsBundleReader
@@ -16,6 +18,7 @@
 @synthesize defaultValues;
 
 
+//  vola metody loadRowsAndSections a loadDefaultValues
 - (void)setup {
     
     [self loadRowsAndSections];
@@ -23,6 +26,7 @@
     
 }
 
+//  inicializuje a nastavi instanciu
 - (id)initAndSetup {
     
     if ((self = [super init])) {
@@ -31,18 +35,19 @@
     return self;
 }
 
+//  vracia xml Root.plist ako nemenne pole
 - (NSArray *)settingsBundle {
     
     NSString *pathStr = [[NSBundle mainBundle] bundlePath];
-    NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:@"Settings.bundle"];
-    NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:@"Root.plist"];
+    NSString *settingsBundlePath = [pathStr stringByAppendingPathComponent:iGPSSettingsBundle];
+    NSString *finalPath = [settingsBundlePath stringByAppendingPathComponent:iGPSRootPlist];
     
     NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:finalPath];
     
-    return [NSArray arrayWithArray:[dict objectForKey:@"PreferenceSpecifiers"]];
+    return [NSArray arrayWithArray:[dict objectForKey:iGPSPrefernceSpecifiersKey]];
 }
 
-
+//  nacita prevolene hodnoty v uzivatelskych nastaveniach
 - (void)loadDefaultValues {
     
     __block NSMutableArray *temp = [NSMutableArray array];
@@ -52,8 +57,8 @@
         
         for (NSDictionary *dict in obj) {
             
-            NSArray *values = [dict objectForKey:@"Titles"];
-            NSNumber *defaultValue = [[NSUserDefaults standardUserDefaults] objectForKey:[dict objectForKey:@"Key"]];
+            NSArray *values = [dict objectForKey:iGPSTitlesKey];
+            NSNumber *defaultValue = [[NSUserDefaults standardUserDefaults] objectForKey:[dict objectForKey:iGPSKey]];
             
             [temp addObject:NSLocalizedString([values objectAtIndex:[defaultValue intValue]],nil)];
             
@@ -67,7 +72,7 @@
     
 }
 
-
+// nastavi atributy rows a sections
 - (void)loadRowsAndSections {
     
     NSMutableArray *subArray = [NSMutableArray array];
@@ -76,7 +81,7 @@
         
    [[self settingsBundle] enumerateObjectsUsingBlock:^(NSDictionary *dict, NSUInteger idx,BOOL *stop){
                                               
-       if ([dict objectForKey:@"Key"]) {
+       if ([dict objectForKey:iGPSKey]) {
            [subArray addObject:dict];
        } else {
            [tempSections addObject:dict];
@@ -94,18 +99,17 @@
 
 }
 
-
+//  vrati slovnikovy kontajner pre predany objekt triedy NSIndexPath, 
+//  ktora reprezentuje specificky uzol vo viacrozmernych poliach
 - (NSDictionary *)dataForIndexPath:(NSIndexPath *)indexPath {
     
     return [[self.rows objectAtIndex:indexPath.section] objectAtIndex:indexPath.row];
 }
 
 
-
-
-
-
+//  destruktor
 - (void)dealloc {
+    
     [rows release];
     [sections release];
     [defaultValues release];
